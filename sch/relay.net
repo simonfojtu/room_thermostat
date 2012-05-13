@@ -1,0 +1,38 @@
+# EESchema Netlist Version 1.1 created  Tue 08 May 2012 09:44:45 PM CEST
+(
+ ( /4FA97450 $noname  K1 CONN_3 {Lib=CONN_3}
+  (    1 N-000001 )
+  (    2 N-000005 )
+  (    3 N-000002 )
+ )
+ ( /4FA94FB0 $noname  P1 CONN_2 {Lib=CONN_2}
+  (    1 N-000003 )
+  (    2 N-000004 )
+ )
+ ( /4FA94F9D RM50  U1 RM50 {Lib=RM50}
+  (    1 N-000002 )
+  (    2 N-000001 )
+  (    3 N-000005 )
+  (    4 N-000004 )
+  (    5 N-000003 )
+ )
+)
+*
+{ Pin List by Nets
+Net 1 "" ""
+ K1 1
+ U1 2
+Net 2 "" ""
+ K1 3
+ U1 1
+Net 3 "" ""
+ P1 1
+ U1 5
+Net 4 "" ""
+ P1 2
+ U1 4
+Net 5 "" ""
+ K1 2
+ U1 3
+}
+#End

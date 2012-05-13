@@ -1,0 +1,24 @@
+Cmp-Mod V01 Genere par PcbNew le Sat 12 May 2012 08:31:30 PM CEST
+
+BeginCmp
+TimeStamp = /4FA97450;
+Reference = K1;
+ValeurCmp = CONN_3;
+IdModule  = BORNIER3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4FA94FB0;
+Reference = P1;
+ValeurCmp = CONN_2;
+IdModule  = BORNIER2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4FA94F9D;
+Reference = U1;
+ValeurCmp = RM50;
+IdModule  = RM50;
+EndCmp
+
+EndListe

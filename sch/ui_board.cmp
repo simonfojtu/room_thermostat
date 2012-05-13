@@ -1,0 +1,101 @@
+Cmp-Mod V01 Genere par PcbNew le Wed 14 Dec 2011 02:17:10 PM CET
+
+BeginCmp
+TimeStamp = /4EB6C37F;
+Reference = C1;
+ValeurCmp = 10uF;
+IdModule  = C2V8;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6BB6F;
+Reference = D1;
+ValeurCmp = POWER;
+IdModule  = LEDV;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6BB7C;
+Reference = D2;
+ValeurCmp = ON;
+IdModule  = LEDV;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6BB7F;
+Reference = D3;
+ValeurCmp = BACKLIGHT1;
+IdModule  = LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6BBB6;
+Reference = D4;
+ValeurCmp = BACKLIGHT2;
+IdModule  = LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6BA39;
+Reference = P1;
+ValeurCmp = CONN_6X2;
+IdModule  = pin_array_6x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6C3DB;
+Reference = P2;
+ValeurCmp = CONN_8;
+IdModule  = CONN_NOKIA3310_LCD;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6BBE2;
+Reference = R2;
+ValeurCmp = R;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6BBE6;
+Reference = R3;
+ValeurCmp = R;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6BBEA;
+Reference = R4;
+ValeurCmp = R;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6C2E8;
+Reference = SW1;
+ValeurCmp = PUSH_BL;
+IdModule  = SW_PUSH_SMD;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6C336;
+Reference = SW2;
+ValeurCmp = PUSH_0;
+IdModule  = SW_PUSH_SMD;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6C33B;
+Reference = SW3;
+ValeurCmp = PUSH_1;
+IdModule  = SW_PUSH_SMD;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB6C33D;
+Reference = SW4;
+ValeurCmp = PUSH_2;
+IdModule  = SW_PUSH_SMD;
+EndCmp
+
+EndListe

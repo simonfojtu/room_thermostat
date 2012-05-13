@@ -1,0 +1,150 @@
+Cmp-Mod V01 Genere par PcbNew le Sat 31 Mar 2012 01:13:58 PM CEST
+
+BeginCmp
+TimeStamp = /4EB233FE;
+Reference = C1;
+ValeurCmp = 1000;
+IdModule  = C1V5;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F12B068;
+Reference = C2;
+ValeurCmp = 10uF;
+IdModule  = C1V5;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F12B04D;
+Reference = C3;
+ValeurCmp = 0.1uF;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB2321A;
+Reference = C4;
+ValeurCmp = 22p;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB23215;
+Reference = C5;
+ValeurCmp = 22p;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F12AFEE;
+Reference = C6;
+ValeurCmp = 0.1uF;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB23793;
+Reference = D1;
+ValeurCmp = 1N4008;
+IdModule  = D3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F760AB8;
+Reference = IC1;
+ValeurCmp = ATMEGA8-AI;
+IdModule  = TQFP32;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB237C4;
+Reference = K1;
+ValeurCmp = DS18B20;
+IdModule  = PIN_ARRAY_3X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB237DF;
+Reference = K2;
+ValeurCmp = TTL_UART;
+IdModule  = PIN_ARRAY_3X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB23855;
+Reference = P1;
+ValeurCmp = DC_IN;
+IdModule  = PIN_ARRAY_2X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB2382E;
+Reference = P2;
+ValeurCmp = UI_BOARD;
+IdModule  = pin_array_6x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F76E412;
+Reference = P3;
+ValeurCmp = REL_IN;
+IdModule  = PIN_ARRAY_2X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB23DFD;
+Reference = P4;
+ValeurCmp = DASA;
+IdModule  = PIN_ARRAY_5X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB17E03;
+Reference = Q1;
+ValeurCmp = BC547;
+IdModule  = TO92-CBE;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB17DD6;
+Reference = R1;
+ValeurCmp = 4k7;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB17D96;
+Reference = R2;
+ValeurCmp = 10k;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB17DD2;
+Reference = R3;
+ValeurCmp = 4k7;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB17DD5;
+Reference = R4;
+ValeurCmp = 10k;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F760EEE;
+Reference = U1;
+ValeurCmp = 78L05;
+IdModule  = TO92;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EB23208;
+Reference = X1;
+ValeurCmp = 7.3728MHz;
+IdModule  = HC-18UV;
+EndCmp
+
+EndListe

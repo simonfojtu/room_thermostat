@@ -1,0 +1,301 @@
+# EESchema Netlist Version 1.1 created  Mon 02 Apr 2012 09:40:34 PM CEST
+(
+ ( /4F76E412 $noname  P3 REL_IN {Lib=CONN_2}
+  (    1 +5V )
+  (    2 N-000012 )
+ )
+ ( /4F760EEE $noname  U1 78L05 {Lib=78L05}
+  (    1 N-000016 )
+  (    2 GND )
+  (    3 +5V )
+ )
+ ( /4F760AB8 TQFP32  IC1 ATMEGA8-AI {Lib=ATMEGA8-AI}
+  (    1 ? )
+  (    2 ? )
+  (    3 GND )
+  (    4 +5V )
+  (    5 GND )
+  (    6 +5V )
+  (    7 N-000014 )
+  (    8 N-000017 )
+  (    9 ? )
+  (   10 ? )
+  (   11 ? )
+  (   12 ? )
+  (   13 ? )
+  (   14 ? )
+  (   15 /MOSI )
+  (   16 /MISO )
+  (   17 /SCK )
+  (   18 +5V )
+  (   19 /LCD_DC )
+  (   20 N-000018 )
+  (   21 GND )
+  (   22 /SS )
+  (   23 /B2 )
+  (   24 /B1 )
+  (   25 /B0 )
+  (   26 /LCD_RST )
+  (   27 /TEMP )
+  (   28 /CTRL )
+  (   29 /RST )
+  (   30 /RX )
+  (   31 /TX )
+  (   32 ? )
+ )
+ ( /4F12B068 $noname  C2 10uF {Lib=CP1}
+  (    1 +5V )
+  (    2 GND )
+ )
+ ( /4F12B04D $noname  C3 0.1uF {Lib=C}
+  (    1 +5V )
+  (    2 GND )
+ )
+ ( /4F12AFEE $noname  C6 0.1uF {Lib=C}
+  (    1 N-000018 )
+  (    2 GND )
+ )
+ ( /4EB23DFD PIN_ARRAY_5x1  P4 DASA {Lib=CONN_5}
+  (    1 GND )
+  (    2 /RST )
+  (    3 /SCK )
+  (    4 /MISO )
+  (    5 /MOSI )
+ )
+ ( /4EB23855 $noname  P1 DC_IN {Lib=CONN_2}
+  (    1 GND )
+  (    2 N-000016 )
+ )
+ ( /4EB2382E $noname  P2 UI_BOARD {Lib=CONN_6X2}
+  (    1 /B0 )
+  (    2 /B1 )
+  (    3 /LCD_RST )
+  (    4 /B2 )
+  (    5 /CTRL )
+  (    6 /SS )
+  (    7 +5V )
+  (    8 /LCD_DC )
+  (    9 GND )
+  (   10 /MISO )
+  (   11 GND )
+  (   12 /SCK )
+ )
+ ( /4EB237DF $noname  K2 TTL_UART {Lib=CONN_3}
+  (    1 GND )
+  (    2 /TX )
+  (    3 /RX )
+ )
+ ( /4EB237C4 $noname  K1 DS18B20 {Lib=CONN_3}
+  (    1 +5V )
+  (    2 GND )
+  (    3 /TEMP )
+ )
+ ( /4EB23793 $noname  D1 1N4008 {Lib=DIODE}
+  (    1 N-000012 )
+  (    2 +5V )
+ )
+ ( /4EB233FE $noname  C1 1000 {Lib=CP1}
+  (    1 N-000016 )
+  (    2 GND )
+ )
+ ( /4EB2321A $noname  C4 22p {Lib=C}
+  (    1 N-000014 )
+  (    2 GND )
+ )
+ ( /4EB23215 $noname  C5 22p {Lib=C}
+  (    1 N-000017 )
+  (    2 GND )
+ )
+ ( /4EB23208 $noname  X1 7.3728MHz {Lib=CRYSTAL}
+  (    1 N-000017 )
+  (    2 N-000014 )
+ )
+ ( /4EB17E03 TO92-EBC  Q1 BC547 {Lib=BC237}
+  (    C N-000012 )
+  (    B N-000013 )
+  (    E GND )
+ )
+ ( /4EB17DD6 $noname  R1 4k7 {Lib=R}
+  (    1 +5V )
+  (    2 /TEMP )
+ )
+ ( /4EB17DD5 $noname  R4 10k {Lib=R}
+  (    1 N-000013 )
+  (    2 GND )
+ )
+ ( /4EB17DD2 $noname  R3 4k7 {Lib=R}
+  (    1 N-000013 )
+  (    2 /CTRL )
+ )
+ ( /4EB17D96 $noname  R2 10k {Lib=R}
+  (    1 +5V )
+  (    2 /RST )
+ )
+)
+*
+{ Allowed footprints by component:
+$component IC1
+ TQFP32
+$endlist
+$component C2
+ CP*
+ SM*
+$endlist
+$component C3
+ SM*
+ C?
+ C1-1
+$endlist
+$component C6
+ SM*
+ C?
+ C1-1
+$endlist
+$component D1
+ D?
+ S*
+$endlist
+$component C1
+ CP*
+ SM*
+$endlist
+$component C4
+ SM*
+ C?
+ C1-1
+$endlist
+$component C5
+ SM*
+ C?
+ C1-1
+$endlist
+$component Q1
+ TO92-EBC
+$endlist
+$component R1
+ R?
+ SM0603
+ SM0805
+$endlist
+$component R4
+ R?
+ SM0603
+ SM0805
+$endlist
+$component R3
+ R?
+ SM0603
+ SM0805
+$endlist
+$component R2
+ R?
+ SM0603
+ SM0805
+$endlist
+$endfootprintlist
+}
+{ Pin List by Nets
+Net 2 "/B2" "B2"
+ IC1 23
+ P2 4
+Net 3 "/B0" "B0"
+ IC1 25
+ P2 1
+Net 5 "GND" "GND"
+ U1 2
+ IC1 21
+ IC1 3
+ IC1 5
+ C2 2
+ C3 2
+ C6 2
+ P4 1
+ P1 1
+ P2 11
+ P2 9
+ K2 1
+ K1 2
+ C1 2
+ C4 2
+ C5 2
+ Q1 E
+ R4 2
+Net 6 "/SCK" "SCK"
+ IC1 17
+ P4 3
+ P2 12
+Net 7 "/MOSI" "MOSI"
+ IC1 15
+ P4 5
+Net 9 "/RX" "RX"
+ IC1 30
+ K2 3
+Net 10 "/LCD_DC" "LCD_DC"
+ IC1 19
+ P2 8
+Net 11 "/TEMP" "TEMP"
+ IC1 27
+ K1 3
+ R1 2
+Net 12 "" ""
+ P3 2
+ D1 1
+ Q1 C
+Net 13 "" ""
+ Q1 B
+ R4 1
+ R3 1
+Net 14 "" ""
+ IC1 7
+ C4 1
+ X1 2
+Net 15 "/RST" "RST"
+ IC1 29
+ P4 2
+ R2 2
+Net 16 "" ""
+ U1 1
+ P1 2
+ C1 1
+Net 17 "" ""
+ IC1 8
+ C5 1
+ X1 1
+Net 18 "" ""
+ IC1 20
+ C6 1
+Net 19 "+5V" "+5V"
+ P3 1
+ U1 3
+ IC1 4
+ IC1 6
+ IC1 18
+ C2 1
+ C3 1
+ P2 7
+ K1 1
+ D1 2
+ R1 1
+ R2 1
+Net 20 "/CTRL" "CTRL"
+ IC1 28
+ P2 5
+ R3 2
+Net 21 "/SS" "SS"
+ IC1 22
+ P2 6
+Net 22 "/TX" "TX"
+ IC1 31
+ K2 2
+Net 23 "/MISO" "MISO"
+ IC1 16
+ P4 4
+ P2 10
+Net 25 "/B1" "B1"
+ IC1 24
+ P2 2
+Net 26 "/LCD_RST" "LCD_RST"
+ IC1 26
+ P2 3
+}
+#End
