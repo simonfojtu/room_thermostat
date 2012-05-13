@@ -1,5 +1,5 @@
 EESchema Schematic File Version 2  date Mon 02 Apr 2012 10:23:42 PM CEST
-LIBS:power,/home/simon/.kicad/libs/mine,device,transistors,conn,linear,regul,74xx,cmos4000,adc-dac,memory,xilinx,special,microcontrollers,dsp,microchip,analog_switches,motorola,texas,intel,audio,interface,digital-audio,philips,display,cypress,siliconi,opto,atmel,contrib,valves,./temp_ctrl.cache
+LIBS:power,./mine,device,transistors,conn,linear,regul,74xx,cmos4000,adc-dac,memory,xilinx,special,microcontrollers,dsp,microchip,analog_switches,motorola,texas,intel,audio,interface,digital-audio,philips,display,cypress,siliconi,opto,atmel,contrib,valves,./temp_ctrl.cache
 EELAYER 24  0
 EELAYER END
 $Descr A4 11700 8267

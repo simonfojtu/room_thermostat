@@ -37,7 +37,7 @@ MSegLar=150
 WpenSer=10
 [pcbnew/libraries]
 LibDir=
-LibName1=/home/simon/.kicad/libs/mine
+LibName1=./mine
 LibName2=sockets
 LibName3=connect
 LibName4=discret

@@ -1,5 +1,12 @@
-update=Tue 08 May 2012 08:21:16 PM CEST
+update=Sun 13 May 2012 12:27:44 PM CEST
 last_client=pcbnew
+[cvpcb]
+version=1
+NetIExt=.net
+[cvpcb/libraries]
+EquName1=devcms
+[common]
+NetDir=
 [eeschema]
 version=1
 LibDir=
@@ -35,7 +42,7 @@ UseNetN=0
 LabSize=60
 [eeschema/libraries]
 LibName1=power
-LibName2=/home/fojtusim/.kicad/libs/mine
+LibName2=./mine
 LibName3=device
 LibName4=transistors
 LibName5=conn
@@ -65,13 +72,6 @@ LibName28=opto
 LibName29=atmel
 LibName30=contrib
 LibName31=valves
-[cvpcb]
-version=1
-NetIExt=.net
-[cvpcb/libraries]
-EquName1=devcms
-[common]
-NetDir=
 [pcbnew]
 version=1
 PadDrlX=320
@@ -84,7 +84,7 @@ MViaDia=200
 MViaDrl=80
 Isol=60
 Countlayer=2
-Lpiste=170
+Lpiste=1000
 RouteTo=15
 RouteBo=0
 TypeVia=3
@@ -110,7 +110,7 @@ WpenSer=10
 [pcbnew/libraries]
 LibDir=
 LibName1=sockets
-LibName2=/home/fojtusim/.kicad/libs/mine
+LibName2=./mine
 LibName3=connect
 LibName4=discret
 LibName5=pin_array
