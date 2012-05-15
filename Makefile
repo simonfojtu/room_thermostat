@@ -1,7 +1,7 @@
 #######################################
 # project specific definitions
-MCU=atmega16
-TARGET=tc
+MCU=atmega8
+TARGET=rt
 F_CPU=7372800
 
 # application defintions (verbose, debug, etc.)
