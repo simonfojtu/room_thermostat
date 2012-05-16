@@ -15,10 +15,13 @@
 //SPI initialize
 inline void spi_init(void)
 {
-        /* output MOSI=PB5, SCK=PB7, SS=PB4 */
-        USIDDR |= (1<<USIMOSI) | (1<<USISCK) | (1<<USISS);
-        /* input MISO=PB6 */
-        USIDDR &= ~(1<<USIMISO);
+        /* output MOSI, SCK, SS */
+        USIMOSIDDR |= 1<<USIMOSI;
+        USISCKDDR |= 1<<USISCKDDR;
+        USISSDDR |= 1<<USISSDDR;
+
+        /* input MISO */
+        USIMISODDR &= ~(1<<USIMISO);
 
         SPCR = ( (1<<SPE)|(1<<MSTR) | (1<<SPR1) |(1<<SPR0));    // Enable SPI, Master, set clock rate fck/128
 }

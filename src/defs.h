@@ -17,38 +17,41 @@
  */
 
 /* USI (SPI) */
-#define USIMOSI PB5
-#define USIMISO PB6
-#define USISCK PB7
-#define USISS PB4
-#define USIDDR DDRB
+#define USIMOSI PB3
+#define USIMOSIDDR DDRB
+#define USIMISO PB4
+#define USIMISODDR DDRB
+#define USISCK PB5
+#define USISCKDDR DDRB
+#define USISS PC7
+#define USISSDDR DDRC 
 
 /* Display control */
-#define INIT_DISPLAY_PINS       do {DDRB |= (1 << PB4) | (1 << PB3); DDRA |= (1 << PA0);} while (0)
-#define SET_DC_PIN              PORTB |= 1 << PB3
-#define CLEAR_DC_PIN            PORTB &= ~(1 << PB3)
-#define SET_SCE_PIN             PORTB |= 1 << PB4
-#define CLEAR_SCE_PIN           PORTB &= ~(1 << PB4)
-#define SET_RST_PIN             PORTA |= 1 << PA0
-#define CLEAR_RST_PIN           PORTA &= ~(1 << PA0)
+#define INIT_DISPLAY_PINS       do {DDRB |= (1 << PB0); DDRC |= (1 << PC3); DDRD |= (1 << PD5);} while (0)
+#define SET_DC_PIN              PORTB |= 1 << PB0
+#define CLEAR_DC_PIN            PORTB &= ~(1 << PB0)
+#define SET_SCE_PIN             PORTD |= 1 << PD5
+#define CLEAR_SCE_PIN           PORTD &= ~(1 << PD5)
+#define SET_RST_PIN             PORTC |= 1 << PC3
+#define CLEAR_RST_PIN           PORTC &= ~(1 << PC3)
 
 /* Buttons */
-#define INIT_BUTTONS_PINS       do {DDRB |= (1 << PB0) | (1 << PB1) | (1 << PB2);} while (0)
+#define INIT_BUTTONS_PINS       do {DDRC |= (1 << PC0) | (1 << PC1) | (1 << PC2);} while (0)
 /* TODO Check ui logic (up above down, ...) */
-#define UP_PRESSED              ((PINB & 1<<PB0) == 0)
-#define DOWN_PRESSED            ((PINB & 1<<PB1) == 0)
-#define MODE_PRESSED            ((PINB & 1<<PB2) == 0)
+#define UP_PRESSED              ((PINC & 1<<PC0) == 0)
+#define DOWN_PRESSED            ((PINC & 1<<PC1) == 0)
+#define MODE_PRESSED            ((PINC & 1<<PC2) == 0)
 
 /* Action output */
-#define SET_CTRL_PIN            PORTD |= 1 << PD7
-#define CLEAR_CTRL_PIN          PORTD &= ~(1 << PD7)
-#define INIT_CTRL_PINS          do {DDRD |= (1 << PD7);} while (0)
+#define SET_CTRL_PIN            PORTC |= 1 << PC5
+#define CLEAR_CTRL_PIN          PORTC &= ~(1 << PC5)
+#define INIT_CTRL_PINS          do {DDRC |= (1 << PC5);} while (0)
 
 /* DS18B20, OW pin */
-#define OW_PIN  PD6
-#define OW_IN   PIND
-#define OW_OUT  PORTD
-#define OW_DDR  DDRD
+#define OW_PIN  PC4
+#define OW_IN   PINC
+#define OW_OUT  PORTC
+#define OW_DDR  DDRC
 
 
 /*
