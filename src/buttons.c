@@ -20,16 +20,14 @@ void buttons_init(void)
 {
 	// vstupni PC2 - PC4
 	DDRC &= ~((1<<PC2) | (1<<PC3) | (1<<PC4));
-	// pull-up odpory
-	PORTC |= (1<<PC2) | (1<<PC3) | (1<<PC4);
 }
 
 void buttons_update(void)
 {
-	/* TODO check correct wiring */
+	/* according to wiring */
 	buttons_state[B_UP]	= (buttons_state[B_UP]    << 1) | ((PINC & 1<<PC2) == 0);
-	buttons_state[B_DOWN]	= (buttons_state[B_DOWN]  << 1) | ((PINC & 1<<PC3) == 0);
-	buttons_state[B_MENU]	= (buttons_state[B_MENU] << 1) | ((PINC & 1<<PC4) == 0);
+	buttons_state[B_DOWN]	= (buttons_state[B_DOWN]  << 1) | ((PINC & 1<<PC4) == 0);
+	buttons_state[B_MENU]	= (buttons_state[B_MENU] << 1) | ((PINC & 1<<PC3) == 0);
 }
 
 uint8_t get_button_f(unsigned char which)
@@ -81,20 +79,24 @@ void Keyboard_initial(Keyboard *me, Event const *e)
 	FsmTran_((Fsm *)me, &Keyboard_setting_sp);
 }
 
+/* Temperature setpoint setting */
 void Keyboard_setting_sp(Keyboard *me, Event const *e)
 {
 	switch (e->sig) {
 	case EVT_KEY_PRESSED:
 		switch (((KbdEvent *)e)->code) {
 		case B_UP:
-			FsmTran_((Fsm *)me, &Keyboard_setting_mode);
+                        me->stat->t1_sp+=5;
 			break;
-		case B_DOWN:
+                case B_DOWN:
+                        me->stat->t1_sp-=5;
+                        break;
+		case B_MENU:
 			FsmTran_((Fsm *)me, &Keyboard_setting_timer);
 			break;
 		}
 	}
-        /* Store into eeprom */
+        /* Store temperature setpoint into eeprom */
         eeprom_write_dword(EEPROM_T1, me->stat->t1_sp + 0xffff); // -> uint32
 }
 
@@ -104,10 +106,7 @@ void Keyboard_setting_timer(Keyboard *me, Event const *e)
 	switch (e->sig) {
 	case EVT_KEY_PRESSED:
 		switch (((KbdEvent *)e)->code) {
-		case B_UP:
-			FsmTran_((Fsm *)me, &Keyboard_setting_sp);
-			break;
-		case B_DOWN:
+		case B_MENU:
 			FsmTran_((Fsm *)me, &Keyboard_setting_mode);
 			break;
 		}
@@ -119,10 +118,7 @@ void Keyboard_setting_mode(Keyboard *me, Event const *e)
 	switch (e->sig) {
 	case EVT_KEY_PRESSED:
 		switch (((KbdEvent *)e)->code) {
-		case B_UP:
-			FsmTran_((Fsm *)me, &Keyboard_setting_timer);
-			break;
-		case B_DOWN:
+		case B_MENU:
 			FsmTran_((Fsm *)me, &Keyboard_setting_sp);
 			break;
 		}
