@@ -1,6 +1,6 @@
 /*
  * @Author  : Simon Fojtu
- * @Date    : 11.01.2012
+ * @Date    : 13.05.2011
  */
 
 #ifndef __SPI_H_
@@ -8,8 +8,10 @@
 
 #include <avr/io.h>
 
+void spi_init(void);
+void WriteByteSPI(unsigned char byte);
+char ReadByteSPI(char addr);
 
-inline void spi_init(void);
-inline void WriteByteSPI(unsigned char byte);
 
 #endif
+

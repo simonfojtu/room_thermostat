@@ -9,9 +9,6 @@
 
 #include "3310_routines.h"
 #include "spi.h"
-#include "defs.h"
-
-#include <avr/io.h>
 #include <util/delay.h>
 
 //global variable for remembering where to start writing the next text string on 3310 LCD
@@ -26,29 +23,32 @@ unsigned char char_start;
 --------------------------------------------------------------------------------------------------*/
 void LCD_init ( void )
 {
-        /* set output pins */
-        INIT_DISPLAY_PINS;
 
-        CLEAR_RST_PIN;	//reset LCD
-        _delay_ms(2);
 
-        CLEAR_SCE_PIN;    //Enable LCD
+	DDRB |= (1<<PB0) | (1<<PB1) | (1<<PB2);
 
-        _delay_ms(2);
-        SET_RST_PIN;
+	CLEAR_RST_PIN;	//reset LCD
+	_delay_ms(2);
 
-        SET_SCE_PIN;	//disable LCD
+	CLEAR_SCE_PIN;    //Enable LCD
 
-        LCD_writeCommand( 0x21 );  // LCD Extended Commands.
-        LCD_writeCommand( 0xE0 );  // Set LCD Vop (Contrast).
-        LCD_writeCommand( 0x04 );  // Set Temp coefficent.
-        LCD_writeCommand( 0x13 );  // LCD bias mode 1:48.
-        LCD_writeCommand( 0x20 );  // LCD Standard Commands, Horizontal addressing mode.
-//    LCD_writeCommand( 0x09 );  // all display segments on
-//    _delay_ms(5);
-        LCD_writeCommand( 0x0c );  // LCD in normal mode.
+	_delay_ms(2);
+	SET_RST_PIN;
 
-        LCD_clear();
+	SET_SCE_PIN;	//disable LCD
+
+	LCD_writeCommand( 0x21 );  // LCD Extended Commands.
+	LCD_writeCommand( 0x80 | 0x30);  // Set LCD Vop (Contrast).
+	LCD_writeCommand( 0x04 );  // Set Temp coefficent.
+	LCD_writeCommand( 0x13 );  // LCD bias mode 1:48.
+	LCD_writeCommand( 0x20 );  // LCD Standard Commands, Horizontal addressing mode.
+        LCD_writeCommand( 0x09 );  // all display segments on
+        _delay_ms(500);
+	LCD_writeCommand( 0x0c );  // LCD in normal mode.
+
+	LCD_clear();
+
+        _delay_ms(500);
 }
 
 /*--------------------------------------------------------------------------------------------------
@@ -59,14 +59,14 @@ void LCD_init ( void )
 --------------------------------------------------------------------------------------------------*/
 void LCD_writeCommand ( unsigned char command )
 {
-        CLEAR_SCE_PIN;	  //enable LCD
+	CLEAR_SCE_PIN;	  //enable LCD
 
-        CLEAR_DC_PIN;	  //set LCD in command mode
+	CLEAR_DC_PIN;	  //set LCD in command mode
 
-        //  Send data to display controller.
-        WriteByteSPI(command);
+	//  Send data to display controller.
+	WriteByteSPI(command);
 
-        SET_SCE_PIN;   	 //disable LCD
+	SET_SCE_PIN;   	 //disable LCD
 }
 
 /*--------------------------------------------------------------------------------------------------
@@ -75,16 +75,16 @@ void LCD_writeCommand ( unsigned char command )
   Argument(s)  :  Data -> Data to be sent
   Return value :  None.
 --------------------------------------------------------------------------------------------------*/
-void LCD_writeData ( unsigned char data )
+void LCD_writeData ( unsigned char Data )
 {
-        CLEAR_SCE_PIN;	  //enable LCD
+	CLEAR_SCE_PIN;	  //enable LCD
 
-        SET_DC_PIN;	  //set LCD in Data mode
+	SET_DC_PIN;	  //set LCD in Data mode
 
-        //  Send data to display controller.
-        WriteByteSPI(data);
+	//  Send data to display controller.
+	WriteByteSPI(Data);
 
-        SET_SCE_PIN;   	 //disable LCD
+	SET_SCE_PIN;   	 //disable LCD
 }
 
 /*--------------------------------------------------------------------------------------------------
@@ -95,15 +95,15 @@ void LCD_writeData ( unsigned char data )
 --------------------------------------------------------------------------------------------------*/
 void LCD_clear ( void )
 {
-        uint8_t i,j;
+	int i,j;
 
-        LCD_gotoXY (0,0);  	//start with (0,0) position
+	LCD_gotoXY (0,0);  	//start with (0,0) position
 
-        for (i=0; i<8; i++)
-                for (j=0; j<90; j++)
-                        LCD_writeData( 0x00 );
+	for (i=0; i<8; i++)
+		for (j=0; j<90; j++)
+			LCD_writeData( 0x00 );
 
-        LCD_gotoXY (0,0);	//bring the XY position back to (0,0)
+	LCD_gotoXY (0,0);	//bring the XY position back to (0,0)
 
 }
 
@@ -116,8 +116,8 @@ void LCD_clear ( void )
 --------------------------------------------------------------------------------------------------*/
 void LCD_gotoXY ( unsigned char x, unsigned char y )
 {
-        LCD_writeCommand (0x80 | x);   //column
-        LCD_writeCommand (0x40 | y);   //row
+	LCD_writeCommand (0x80 | x);   //column
+	LCD_writeCommand (0x40 | y);   //row
 }
 
 /*--------------------------------------------------------------------------------------------------
@@ -128,14 +128,14 @@ void LCD_gotoXY ( unsigned char x, unsigned char y )
 --------------------------------------------------------------------------------------------------*/
 void LCD_writeChar (unsigned char ch)
 {
-        unsigned char j;
+	unsigned char j;
 
-        LCD_writeData(0x00);
+	LCD_writeData(0x00);
 
-        for (j=0; j<5; j++)
-                LCD_writeData( pgm_read_byte(&smallFont [(ch-32)*5 + j] ));
+	for (j=0; j<5; j++)
+		LCD_writeData( smallFont [(ch-32)*5 + j] );
 
-        LCD_writeData( 0x00 );
+	LCD_writeData( 0x00 );
 }
 
 /*--------------------------------------------------------------------------------------------------
@@ -146,32 +146,32 @@ void LCD_writeChar (unsigned char ch)
   Argument(s)  :  ch   -> Character to write.
   Return value :  None.
 --------------------------------------------------------------------------------------------------*/
-void LCD_writeChar_megaFont (unsigned char ch)
-{
-        unsigned char i, j;
-
-        if (ch == '.')
-                ch = 10;
-        else if (ch == '+')
-                ch = 11;
-        else if (ch == '-')
-                ch = 12;
-        else
-                ch = ch & 0x0f;
-
-
-        for (i=0;i<3;i++) {
-                LCD_gotoXY (4 + char_start, i+2);
-
-                for (j=0; j<16; j++)
-                        LCD_writeData( pgm_read_byte(&number[ch][i][j]));
-        }
-
-        if (ch == '.')
-                char_start += 5;
-        else
-                char_start += 12;
-}
+//void LCD_writeChar_megaFont (unsigned char ch)
+//{
+//	unsigned char i, j;
+//
+//	if (ch == '.')
+//		ch = 10;
+//	else if (ch == '+')
+//		ch = 11;
+//	else if (ch == '-')
+//		ch = 12;
+//	else
+//		ch = ch & 0x0f;
+//
+//
+//	for (i=0;i<3;i++) {
+//		LCD_gotoXY (4 + char_start, i+2);
+//
+//		for (j=0; j<16; j++)
+//			LCD_writeData( number[ch][i][j]);
+//	}
+//
+//	if (ch == '.')
+//		char_start += 5;
+//	else
+//		char_start += 12;
+//}
 
 /*--------------------------------------------------------------------------------------------------
   Name         :  LCD_writeString_megaFont
@@ -179,17 +179,17 @@ void LCD_writeChar_megaFont (unsigned char ch)
   Argument(s)  :  string -> Pointer to ASCII string (stored in RAM)
   Return value :  None.
 --------------------------------------------------------------------------------------------------*/
-void LCD_writeString_megaFont ( unsigned char *string )
-{
-        char_start = 0;
-
-        while ( *string )
-                LCD_writeChar_megaFont( *string++ );
-
-        LCD_gotoXY(char_start+6, 3);
-        LCD_writeChar('z'+1); 			  //symbol of Degree
-        LCD_writeChar('C');
-}
+//void LCD_writeString_megaFont ( unsigned char *string )
+//{
+//	char_start = 0;
+//
+//	while ( *string )
+//		LCD_writeChar_megaFont( *string++ );
+//
+//	LCD_gotoXY(char_start+6, 3);
+//	LCD_writeChar('z'+1); 			  //symbol of Degree
+//	LCD_writeChar('C');
+//}
 
 /*--------------------------------------------------------------------------------------------------
   Name         :  LCD_writeString_F
@@ -199,9 +199,27 @@ void LCD_writeString_megaFont ( unsigned char *string )
 --------------------------------------------------------------------------------------------------*/
 void LCD_writeString_F ( unsigned char *string )
 {
-        while ( *string )
-                LCD_writeChar( *string++ );
+	while ( *string )
+		LCD_writeChar( *string++ );
 }
+
+
+/*--------------------------------------------------------------------------------------------------
+  Name         :  lcd_delay_ms
+  Description  :  1 millisec delay (appx.)
+  Argument(s)  :  None.
+  Return value :  None.
+--------------------------------------------------------------------------------------------------*/
+//void lcd_delay_ms(int miliSec)  //for 1Mhz clock
+//{
+//	int i,j;
+//
+//	for (i=0;i<miliSec;i++)
+//		for (j=0;j<100;j++) {
+//			asm("nop");
+//			asm("nop");
+//		}
+//}
 
 /*--------------------------------------------------------------------------------------------------
   Name         :  LCD_drawBorder
@@ -209,25 +227,25 @@ void LCD_writeString_F ( unsigned char *string )
   Argument(s)  :  None
   Return value :  None
 --------------------------------------------------------------------------------------------------*/
-void LCD_drawBorder (void )
-{
-        unsigned char i, j;
-
-        for (i=0; i<7; i++) {
-                LCD_gotoXY (0,i);
-
-                for (j=0; j<84; j++) {
-                        if (j == 0 || j == 83)
-                                LCD_writeData (0xff);		// first and last column solid fill to make line
-                        else if (i == 0)
-                                LCD_writeData (0x08);		// row 0 is having only 5 bits (not 8)
-                        else if (i == 6)
-                                LCD_writeData (0x04);		// row 6 is having only 3 bits (not 8)
-                        else
-                                LCD_writeData (0x00);
-                }
-        }
-}
+//void LCD_drawBorder (void )
+//{
+//	unsigned char i, j;
+//
+//	for (i=0; i<7; i++) {
+//		LCD_gotoXY (0,i);
+//
+//		for (j=0; j<84; j++) {
+//			if (j == 0 || j == 83)
+//				LCD_writeData (0xff);		// first and last column solid fill to make line
+//			else if (i == 0)
+//				LCD_writeData (0x08);		// row 0 is having only 5 bits (not 8)
+//			else if (i == 6)
+//				LCD_writeData (0x04);		// row 6 is having only 3 bits (not 8)
+//			else
+//				LCD_writeData (0x00);
+//		}
+//	}
+//}
 
 /*--------------------------------------------------------------------------------------------------
                                          End of file.

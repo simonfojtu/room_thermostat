@@ -11,35 +11,24 @@ extern "C"
 #include <util/delay.h>
 #include <util/atomic.h>
 
-#include "defs.h"
 
+	/*******************************************/
+	/* Hardware connection                     */
+	/*******************************************/
 
-        /*******************************************/
-        /* Hardware connection                     */
-        /*******************************************/
-
-        /* Define OW_ONE_BUS if only one 1-Wire-Bus is used
-           in the application -> shorter code.
-           If not defined make sure to call ow_set_bus() before using
-           a bus. Runtime bus-select increases code size by around 300
-           bytes so use OW_ONE_BUS if possible */
+	/* Define OW_ONE_BUS if only one 1-Wire-Bus is used
+	   in the application -> shorter code.
+	   If not defined make sure to call ow_set_bus() before using
+	   a bus. Runtime bus-select increases code size by around 300
+	   bytes so use OW_ONE_BUS if possible */
 #define OW_ONE_BUS
 
 #ifdef OW_ONE_BUS
 
-#ifndef OW_PIN
-#error | OW PIN not defined!
-#endif
-#ifndef OW_IN
-#error | OW IN not defined!
-#endif
-#ifndef OW_OUT
-#error | OW OUT not defined!
-#endif
-#ifndef OW_DDR
-#error | OW DDR not defined!
-#endif
-
+#define OW_PIN  PC5
+#define OW_IN   PINC
+#define OW_OUT  PORTC
+#define OW_DDR  DDRC
 #define OW_CONF_DELAYOFFSET 0
 
 #else
@@ -65,7 +54,7 @@ extern "C"
 // sensores have been parasite-powered.
 #define OW_USE_INTERNAL_PULLUP     0  /* 0=external, 1=internal */
 
-        /*******************************************/
+	/*******************************************/
 
 
 #define OW_MATCH_ROM    0x55
@@ -80,26 +69,26 @@ extern "C"
 // rom-code size including CRC
 #define OW_ROMCODE_SIZE 8
 
-        extern uint8_t ow_reset(void);
+	extern uint8_t ow_reset(void);
 
-        extern uint8_t ow_bit_io( uint8_t b );
-        extern uint8_t ow_byte_wr( uint8_t b );
-        extern uint8_t ow_byte_rd( void );
+	extern uint8_t ow_bit_io( uint8_t b );
+	extern uint8_t ow_byte_wr( uint8_t b );
+	extern uint8_t ow_byte_rd( void );
 
-        extern uint8_t ow_rom_search( uint8_t diff, uint8_t *id );
+	extern uint8_t ow_rom_search( uint8_t diff, uint8_t *id );
 
-        extern void ow_command( uint8_t command, uint8_t *id );
-        extern void ow_command_with_parasite_enable( uint8_t command, uint8_t *id );
+	extern void ow_command( uint8_t command, uint8_t *id );
+	extern void ow_command_with_parasite_enable( uint8_t command, uint8_t *id );
 
-        extern void ow_parasite_enable( void );
-        extern void ow_parasite_disable( void );
-        extern uint8_t ow_input_pin_state( void );
+	extern void ow_parasite_enable( void );
+	extern void ow_parasite_disable( void );
+	extern uint8_t ow_input_pin_state( void );
 
 #ifndef OW_ONE_BUS
-        extern void ow_set_bus( volatile uint8_t* in,
-                                        volatile uint8_t* out,
-                                        volatile uint8_t* ddr,
-                                        uint8_t pin );
+	extern void ow_set_bus( volatile uint8_t* in,
+		                        volatile uint8_t* out,
+		                        volatile uint8_t* ddr,
+		                        uint8_t pin );
 #endif
 
 #ifdef __cplusplus

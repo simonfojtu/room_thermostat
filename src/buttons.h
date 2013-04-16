@@ -10,17 +10,16 @@
 #include "defs.h"
 
 enum {
-        B_UP,
-        B_DOWN,
-        B_MODE,
-        BUTTONS_COUNT
+	B_UP,
+	B_DOWN,
+	B_MENU,
+	BUTTONS_COUNT
 };
 
 enum {
-        EVT_KEY_PRESSED,
-        EVT_KEY_RELEASED,
-        EVT_KEY_HELD,
-        EVT_COUNT
+	EVT_KEY_PRESSED,
+	EVT_KEY_RELEASED,
+	EVT_COUNT
 };
 
 void buttons_init(void);

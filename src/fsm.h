@@ -14,12 +14,12 @@ typedef void (*State)(Fsm *, Event const *);
 
 /* Event base class */
 struct Event {
-        Signal sig;
+	Signal sig;
 };
 
 /* Finite State Machine base class */
 struct Fsm {
-        State state__; /* the current state */
+	State state__; /* the current state */
 };
 
 /* "inlined" methods of Fsm class */
