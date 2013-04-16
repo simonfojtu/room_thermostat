@@ -52,8 +52,7 @@ void KeyboardCtor(Keyboard *me);
 void Keyboard_initial(Keyboard *me, Event const *e);
 void Keyboard_default(Keyboard *me, Event const *e);
 void Keyboard_setting_sp(Keyboard *me, Event const *e);
-void Keyboard_setting_timer(Keyboard *me, Event const *e);
-void Keyboard_setting_mode(Keyboard *me, Event const *e);
+void Keyboard_setting_time(Keyboard *me, Event const *e);
 
 typedef struct KbdEvent KbdEvent;
 struct KbdEvent {
@@ -92,7 +91,7 @@ void Keyboard_setting_sp(Keyboard *me, Event const *e)
                         me->stat->t1_sp-=5;
                         break;
 		case B_MENU:
-			FsmTran_((Fsm *)me, &Keyboard_setting_timer);
+			FsmTran_((Fsm *)me, &Keyboard_setting_time);
 			break;
 		}
 	}
@@ -101,30 +100,23 @@ void Keyboard_setting_sp(Keyboard *me, Event const *e)
 }
 
 
-void Keyboard_setting_timer(Keyboard *me, Event const *e)
+void Keyboard_setting_time(Keyboard *me, Event const *e)
 {
 	switch (e->sig) {
 	case EVT_KEY_PRESSED:
 		switch (((KbdEvent *)e)->code) {
-		case B_MENU:
-			FsmTran_((Fsm *)me, &Keyboard_setting_mode);
+		case B_UP:
+                        // TODO
 			break;
-		}
-	}
-}
-
-void Keyboard_setting_mode(Keyboard *me, Event const *e)
-{
-	switch (e->sig) {
-	case EVT_KEY_PRESSED:
-		switch (((KbdEvent *)e)->code) {
+                case B_DOWN:
+                        // TODO
+                        break;
 		case B_MENU:
 			FsmTran_((Fsm *)me, &Keyboard_setting_sp);
 			break;
 		}
 	}
 }
-
 
 void Keyboard_tick(status_t * stat_)
 {

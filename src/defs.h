@@ -22,15 +22,13 @@
 
 enum ctrl_mode_t {
 	CTRL_OFF,
-	CTRL_CONST,
-	CTRL_RAMP,
         CTRL_HYST,
 	CTRL_MAX
 };
 
 enum event_type {
-	EVENT_B_LEFT,
-	EVENT_B_RIGHT,
+	EVENT_B_UP,
+	EVENT_B_DOWN,
 	EVENT_B_MENU,
 	EVENT_NOP,
 	MAX_EVENTS

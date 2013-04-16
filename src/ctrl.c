@@ -35,12 +35,6 @@ void ctrl_tick(Ctrl *c, status_t *s)
 	case CTRL_OFF:
 		action = 0;
 		break;
-	case CTRL_CONST:
-		action = c->P * c->e + c->e_sum;
-		break;
-	case CTRL_RAMP:
-		// TODO implement ramp following
-                break;
         case CTRL_HYST:
                 if (c->e > 1)
                         action = c->T_act;
@@ -66,38 +60,6 @@ void ctrl_tick(Ctrl *c, status_t *s)
 	} else {
 		c->t0 = -1;
 	}
-
-	char buffer[10];
-
-	LCD_gotoXY(0,4);
-	switch (s->ctrl_mode) {
-	case(CTRL_CONST):
-		LCD_writeChar('-');
-		break;
-	case(CTRL_RAMP):
-		LCD_writeChar('/');
-		break;
-	case(CTRL_HYST):
-		LCD_writeChar('t');
-		break;
-	case(CTRL_OFF):
-		LCD_writeChar('x');
-		break;
-	}
-	LCD_writeChar(' ');
-	LCD_writeString_F(ltoa(c->I, buffer, 10));
-	LCD_writeChar(' ');
-	LCD_writeString_F(ltoa(c->P, buffer, 10));
-	LCD_writeChar('_');
-
-	LCD_gotoXY(0,5);
-	LCD_writeString_F(ltoa(c->e, buffer, 10));
-	LCD_writeChar(' ');
-	LCD_writeString_F(ltoa(action, buffer, 10));
-	LCD_writeChar(' ');
-	LCD_writeString_F(ltoa(c->e_sum, buffer, 10));
-	LCD_writeChar('_');
-
 
 }
 
