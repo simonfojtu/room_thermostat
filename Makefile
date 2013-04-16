@@ -1,8 +1,8 @@
 #######################################
 # project specific definitions
 MCU=atmega8
-TARGET=rt
-F_CPU=7372800
+TARGET=ch
+F_CPU=7372800UL
 
 # application defintions (verbose, debug, etc.)
 #DEFINITIONS=-DUART_LOG
@@ -16,20 +16,12 @@ F_CPU=7372800
 #######################################
 # directories
 SRC=src
-OBJDIR=obj
+OBJ=obj
 
 #######################################
 # programming ports
 PARPORT=/dev/parport0
 SERIALPORT=/dev/ttyS0
-
-# Debugging format.
-# Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
-# AVR (extended) COFF requires stabs, plus an avr-objcopy run.
-DEBUG = stabs
-
-# Output format. (can be srec, ihex, binary)
-FORMAT = ihex
 
 #######################################
 # Compiler flag to set the C Standard level.
@@ -40,45 +32,20 @@ FORMAT = ihex
 CSTANDARD= -std=gnu99
 
 #######################################
-# Compiler flags.
-#  -g*:          generate debugging information
-#  -O*:          optimization level
-#  -f...:        tuning, see GCC manual and avr-libc documentation
-#  -Wall...:     warning level
-#  -Wa,...:      tell GCC to pass this to the assembler.
-#    -adhlns...: create assembler listing
-CFLAGS= -DF_CPU=$(F_CPU)
+# flags
+COMMON= -mmcu=$(MCU)
+CFLAGS= $(COMMON)
+CFLAGS+= -DF_CPU=$(F_CPU)
 CFLAGS+= -Wall -Wstrict-prototypes -mcall-prologues
-CFLAGS+= -g$(DEBUG)
+#CFLAGS+= -g
 CFLAGS+= -Os
-#CFLAGS+= -v
 CFLAGS+= $(CSTANDARD)
 CFLAGS+= $(DEFINITIONS)
-CFLAGS+= -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
-CFLAGS+= -Wa,-adhlns=$(@:.o=.lst)
 
 #######################################
-# External memory options
-
-# 64 KB of external RAM, starting after internal RAM (ATmega128!),
-# used for variables (.data/.bss) and heap (malloc()).
-#EXTMEMOPTS = -Wl,-Tdata=0x801100,--defsym=__heap_end=0x80ffff
-
-# 64 KB of external RAM, starting after internal RAM (ATmega128!),
-# only used for heap (malloc()).
-#EXTMEMOPTS = -Wl,--defsym=__heap_start=0x801100,--defsym=__heap_end=0x80ffff
-
-EXTMEMOPTS =
-
-# Linker flags.
-#  -Wl,...:     tell GCC to pass this to linker.
-#    -Map:      create map file
-#    --cref:    add cross reference to  map file
-LDFLAGS = -Wl,-Map=$(TARGET).map,--cref
-#LDFLAGS+= -Wl,--gc-sections
-LDFLAGS += $(EXTMEMOPTS)
-
 # Linker flags
+LDFLAGS= $(COMMON)
+LDFLAGS+= -Wl,--gc-sections
 # workarounds for Gentoo BUG 147155:
 # run #ln -s /usr/i686-pc-linux-gnu/avr/lib/ldscripts /usr/avr/lib/ldscripts
 # OR
@@ -89,174 +56,78 @@ LDFLAGS+= -T /usr/lib/binutils/avr/2.21/ldscripts/avr5.x
 # programs
 CC=avr-gcc
 OBJCOPY=avr-objcopy
-OBJDUMP=avr-objdump
 AR=ar
-RM=rm -rf
+RM=rm
 MKDIR=mkdir
-NM=nm
-SIZE=avr-size
 SIZEM=avr-size-mcu.sh
 
 #######################################
 # Fuses
 
 # Frequency range 3.0 - 8.0 MHz
-#CKSEL=111
-#CKOPT=1
+CKSEL=111
+CKOPT=1
 # Crystal oscillator, fast rising power
-#SUT=10
+SUT=10
 
 ######################################
-# Define all object files.
 SOURCES=$(wildcard $(SRC)/*.c)
-ASOURCES=$(wildcard $(SRC)/*.S)
-OBJECTS=$(patsubst $(SRC)/%,$(OBJDIR)/%,$(SOURCES:.c=.o))
-OBJECTS+=$(patsubst $(SRC)/%,$(OBJDIR)/%,$(ASOURCES:.S=.o))
-
-# Define all listing files.
-LST = $(OBJECTS:.o=.lst)
-
-# Compiler flags to generate dependency files.
-GENDEPFLAGS = -Wp,-M,-MP,-MT,$(*F).o,-MF,.dep/$(@F).d
-
-# Combine all necessary flags and optional flags.
-# Add target processor to flags.
-ALL_CFLAGS = -mmcu=$(MCU) -I. $(CFLAGS) $(GENDEPFLAGS)
-ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
+HEADERS:=$(wildcard $(SRC)/*.h)
+OBJECTS=$(patsubst $(SRC)/%,$(OBJ)/%,$(patsubst %.c,%.o,$(wildcard $(SRC)/*.c)))
 
 
-# Define Messages
-MSG_SIZE_BEFORE = Size before: 
-MSG_SIZE_AFTER = Size after:
-MSG_FLASH = Creating load file for Flash:
-MSG_EEPROM = Creating load file for EEPROM:
-MSG_EXTENDED_LISTING = Creating Extended Listing:
-MSG_SYMBOL_TABLE = Creating Symbol Table:
-MSG_LINKING = Linking:
-MSG_COMPILING = Compiling:
-MSG_ASSEMBLING = Assembling:
-MSG_CLEANING = Cleaning project:
+# rules
 
+all: sizebefore testprint createdir $(TARGET).hex sizeafter
 
-# Default target.
-all: gccversion sizebefore build sizeafter 
+HEXSIZE = $(SIZEM) $(TARGET).hex
 
-build: $(OBJDIR) elf hex eep lss sym
-
-elf: $(TARGET).elf
-hex: $(TARGET).hex
-eep: $(TARGET).eep
-lss: $(TARGET).lss 
-sym: $(TARGET).sym
-
-# Link: create ELF output file from object files.
-.SECONDARY : $(TARGET).elf
-.PRECIOUS : $(OBJECTS)
-%.elf: $(OBJECTS)
-	@echo
-	@echo $(MSG_LINKING) $@
-	$(CC) $(ALL_CFLAGS) $(OBJECTS) --output $@ $(LDFLAGS)
-
-# Create final output files (.hex, .eep) from ELF output file.
-%.hex: %.elf
-	@echo
-	@echo $(MSG_FLASH) $@
-	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
-
-%.eep: %.elf
-	@echo
-	@echo $(MSG_EEPROM) $@
-	-$(OBJCOPY) -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 -O $(FORMAT) $< $@
-
-# Create extended listing file from ELF output file.
-%.lss: %.elf
-	@echo
-	@echo $(MSG_EXTENDED_LISTING) $@
-	$(OBJDUMP) -h -S $< > $@
-
-# Create a symbol table from ELF output file.
-%.sym: %.elf
-	@echo
-	@echo $(MSG_SYMBOL_TABLE) $@
-	$(NM) -n $< > $@
-
-# Display size of file.
-#ELFSIZE = $(SIZE) -C  --mcu=$(MCU) $(TARGET).elf
-ELFSIZE = $(SIZEM) $(TARGET).elf
 sizebefore:
-	@if [ -f $(TARGET).elf ]; then echo; echo $(MSG_SIZE_BEFORE); $(ELFSIZE); echo; fi
+	@if [ -f $(TARGET).hex ]; then echo; echo "Size before:"; $(HEXSIZE); echo; fi
 
 sizeafter:
-	@if [ -f $(TARGET).elf ]; then echo; echo $(MSG_SIZE_AFTER); $(ELFSIZE); echo; fi
+	@if [ -f $(TARGET).hex ]; then echo; echo "Size after:"; $(HEXSIZE); echo; fi
+
+testprint:
+	@echo "SOURCES: $(SOURCES)"
+	@echo "HEADERS: $(HEADERS)"
+	@echo "OBJECTS: $(OBJECTS)"
+
+createdir:
+	$(MKDIR) -p $(OBJ)
 
 
+.PHONY : $(TARGET)
+.PHONY : load
+.PHONY : clean
+.PHONY : re
 
-# Display compiler version information.
-gccversion : 
-	@$(CC) --version
-
-test:
-	@echo $(SOURCES)
-	@echo $(ASOURCES)
-	@echo $(OBJECTS)
-
-$(OBJDIR):
-	mkdir $(OBJDIR)
-
-# Compile: create object files from C source files.
-$(OBJDIR)/%.o : $(SRC)/%.c
-	@echo
-	@echo $(MSG_COMPILING) $<
-	$(CC) -c $(ALL_CFLAGS) $< -o $@ 
-
-# Compile: create assembler files from C source files.
-$(OBJDIR)/%.s : $(SRC)/%.c
-	$(CC) -S $(ALL_CFLAGS) $< -o $@
+$(TARGET): $(OBJECTS)
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $(OBJ)/$(TARGET)
 
 
-# Assemble: create object files from assembler source files.
-$(OBJDIR)/%.o : $(SRC)/%.S
-	@echo
-	@echo $(MSG_ASSEMBLING) $<
-	$(CC) -c $(ALL_ASFLAGS) $< -o $@
+# compiles all source files
+$(OBJ)/%.o: $(SRC)/%.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+
+$(TARGET).hex : $(TARGET)
+	$(OBJCOPY) -R .eeprom -O ihex $(OBJ)/$(TARGET) $(TARGET).hex 
 
 
 load: load_ser
 # you need to erase first before loading the program.
 # load (program) the software into the flash:
 load_par: $(TARGET).hex
-	avrdude -p $(MCU) -c dapa -P $(PARPORT) -U flash:w:$(TARGET).hex
+	uisp -dlpt=$(PARPORT) --erase  -dprog=dapa
+	uisp -dlpt=$(PARPORT) --upload if=$(TARGET).hex -dprog=dapa -v=3 --hash=32
 
 load_ser: $(TARGET).hex
-	avrdude -p $(MCU) -c dasa -P $(SERIALPORT) -U flash:w:$(TARGET).hex
+	uisp -dlpt=$(SERIALPORT) --erase  -dprog=dasa
+	uisp -dlpt=$(SERIALPORT) --upload if=$(TARGET).hex -dprog=dasa -v=3 --hash=32 --verify
 
 
-# Target: clean project.
-clean: clean_list 
+clean:
+	$(RM) -rf *.map *.hex $(OBJ)
 
-clean_list :
-	@echo
-	@echo $(MSG_CLEANING)
-	$(RM) $(TARGET).hex
-	$(RM) $(TARGET).eep
-	$(RM) $(TARGET).elf
-	$(RM) $(TARGET).map
-	$(RM) $(TARGET).sym
-	$(RM) $(TARGET).lss
-	$(RM) $(OBJECTS)
-	$(RM) $(LST)
-	$(RM) .dep/*
-	$(RM) $(SOURCES:.c=.s)
-	$(RM) $(SOURCES:.c=.d)
-
-
-# Include the dependency files.
--include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
-
-
-# Listing of phony targets.
-.PHONY : all sizebefore sizeafter gccversion \
-build elf hex eep lss sym \
-clean clean_list \
-load load_ser load_par \
-test
+re: clean all

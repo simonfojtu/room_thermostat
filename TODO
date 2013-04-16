@@ -1,1 +1,2 @@
-Makefile: uisp && avrdude options
+implement logger
+handle EVT_KEY_HELD (for sp, timer and mode adjusting)
