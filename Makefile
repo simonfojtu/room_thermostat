@@ -36,7 +36,7 @@ CSTANDARD= -std=gnu99
 COMMON= -mmcu=$(MCU)
 CFLAGS= $(COMMON)
 CFLAGS+= -DF_CPU=$(F_CPU)
-CFLAGS+= -Wall -Wstrict-prototypes -mcall-prologues
+CFLAGS+= -Wall -Wstrict-prototypes -mcall-prologues -Werror
 #CFLAGS+= -g
 CFLAGS+= -Os
 CFLAGS+= $(CSTANDARD)

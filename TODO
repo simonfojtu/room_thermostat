@@ -1,3 +1,2 @@
 implement logger
 handle negative temperatures
-redraw only what has changed

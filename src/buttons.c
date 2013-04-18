@@ -43,6 +43,7 @@ void Keyboard_initial(Context *ctx, Event const *e);
 void Keyboard_default(Context *ctx, Event const *e);
 void Keyboard_setting_sp(Context *ctx, Event const *e);
 void Keyboard_setting_time(Context *ctx, Event const *e);
+void Keyboard_setting_onoff(Context *ctx, Event const *e);
 
 
 void KeyboardCtor(Context *ctx)
@@ -98,6 +99,24 @@ void Keyboard_setting_time(Context *ctx, Event const *e)
 			break;
                 case B_DOWN:
                         // TODO
+                        break;
+		case B_MENU:
+			FsmTran_((Fsm *)ctx, &Keyboard_setting_onoff);
+			break;
+		}
+	}
+}
+
+void Keyboard_setting_onoff(Context *ctx, Event const *e)
+{
+	switch (e->sig) {
+	case EVT_KEY_PRESSED:
+		switch (((KbdEvent *)e)->code) {
+		case B_UP:
+                        ctx->ctrl_mode = CTRL_HYST;
+			break;
+                case B_DOWN:
+                        ctx->ctrl_mode = CTRL_OFF;
                         break;
 		case B_MENU:
 			FsmTran_((Fsm *)ctx, &Keyboard_setting_sp);
@@ -167,7 +186,7 @@ void Keyboard_tick(Context * ctx)
 
 void Keyboard_init(Context * ctx)
 {
-	KeyboardCtor(&ctx->fsm);
+	KeyboardCtor(ctx);
 	FsmInit(&ctx->fsm, 0);
 	buttons_init();
 }
