@@ -19,6 +19,7 @@ enum {
 enum {
 	EVT_KEY_PRESSED,
 	EVT_KEY_RELEASED,
+        EVT_KEY_HELD,
 	EVT_COUNT
 };
 

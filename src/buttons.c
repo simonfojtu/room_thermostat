@@ -7,8 +7,6 @@
 #include "fsm.h"
 #include "eeprom.h"
 
-#include "gui.h"
-
 /*
  * state of the buttons
  * UP, DOWN, MENU 
@@ -73,6 +71,17 @@ void Keyboard_setting_sp(Context *ctx, Event const *e)
 			FsmTran_((Fsm *)ctx, &Keyboard_setting_time);
 			break;
 		}
+                break;
+	case EVT_KEY_HELD:
+		switch (((KbdEvent *)e)->code) {
+		case B_UP:
+                        ctx->t1_sp+=5;
+			break;
+                case B_DOWN:
+                        ctx->t1_sp-=5;
+                        break;
+		}
+                break;
 	}
         /* Store temperature setpoint into eeprom */
         eeprom_write_dword(EEPROM_T1, ctx->t1_sp + 0xffff); // -> uint32
@@ -122,6 +131,22 @@ void Keyboard_tick(Context * ctx)
 				break;
 			}
 		}
+                /* Button held */
+                if (get_button_f(i) == 0xff) {
+                        buttons_state[i] = 0xfd; // 11111101b
+			if (ctx->kbdEvtQueue.size < EVENTS_QUEUE_MAX_SIZE - 1) {
+				Event e;
+				e.sig = EVT_KEY_HELD;
+				KbdEvent nke;
+				nke.super_ = e;
+				nke.code = i;
+				ctx->kbdEvtQueue.queue[ctx->kbdEvtQueue.size] = nke;
+				ctx->kbdEvtQueue.size++;
+			} else {
+				// else drop the event
+				break;
+			}
+                }
 		last[i] = get_button(i);
 	}
 
