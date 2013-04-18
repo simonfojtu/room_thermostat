@@ -53,9 +53,6 @@ int initialize(void)
 {
 	/* Initialize stat */
 	ctx.ltime = 0;
-#ifdef USE_KTY
-	ctx.t0 = 0;
-#endif
         ctx.t1 = 0;
 
         // Default settings
