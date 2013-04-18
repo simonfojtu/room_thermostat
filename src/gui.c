@@ -32,9 +32,9 @@ void gui_display_(Context * ctx)
 	// TODO display selection
 
 	/* DS18B20 sensor output */
-        if ((ctx->t1 != ctx_prev.t1) || (ctx->ds_status != ctx_prev.ds_status) || (ctx->t1_sp != ctx_prev.t1_sp)) {
+        if ((ctx->t1 != ctx_prev.t1) || (ctx->temp_status != ctx_prev.temp_status) || (ctx->t1_sp != ctx_prev.t1_sp)) {
 	        LCD_gotoXY(0, 1);
-	        if (ctx->ds_status == DS_OK) {
+	        if (ctx->temp_status == DS_OK) {
 	        	LCD_writeString_F((unsigned char *) ltoa(ctx->t1/10, buffer, 10));
 	        	LCD_writeChar('.');
 	        	LCD_writeString_F((unsigned char *) ltoa(ctx->t1- (ctx->t1/10)*10, buffer, 10));

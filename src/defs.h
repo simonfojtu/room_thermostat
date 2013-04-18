@@ -66,10 +66,10 @@ struct Context {
 	/* Time in seconds */
 	long sec;
 
-	/* DS18b20 temperature in decicelsius */
+	/* temperature in decicelsius */
 	int16_t t1;
-	/* DS18B20 result status */
-	char ds_status;
+	/* temperature status */
+	char temp_status;
 
 	/*
 	 * Control variables

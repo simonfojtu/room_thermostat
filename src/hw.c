@@ -7,10 +7,6 @@
 
 #include <avr/io.h>
 
-#ifdef USE_KTY
-/* reading temperature from KTY84-130 sensor */
-#include "adc.h"
-#endif
 /* reading temperature from DS18B20 */
 #include "onewire.h"
 #include "ds18x20.h"
@@ -29,11 +25,6 @@ void hw_init()
 	ow_set_bus(&PINB,&PORTB,&DDRB,PB0);
 #endif
 
-#ifdef USE_KTY
-	/* Init ADC */
-	adc_init();
-#endif
-
 	/* Init PI controller */
 	t1_ctrl.P = 1;
 	t1_ctrl.I = 0;
@@ -46,24 +37,15 @@ void hw_init()
 void hw_read_tick(Context * ctx)
 {
 
-#ifdef USE_KTY
-	/* Display temperatures */
-	/* KTY */
-	if (adc_is_conversion_finished()) {
-		ctx.t0 = adc_get_result();
-		adc_start_conversion();
-	}
-#endif
-
 	/* DS */
 	if (DS18X20_conversion_in_progress() == DS18X20_CONVERSION_DONE) {
 		if (DS18X20_read_decicelsius_single(DS18B20_FAMILY_CODE, &ctx->t1) == DS18X20_OK) {
-			ctx->ds_status = DS_OK;
+			ctx->temp_status = DS_OK;
 		} else {
-			ctx->ds_status = DS_READ_ERROR;
+			ctx->temp_status = DS_READ_ERROR;
 		}
 		if (DS18X20_start_meas(DS18X20_POWER_EXTERN, NULL) != DS18X20_OK) {
-			ctx->ds_status = DS_MEAS_ERROR;
+			ctx->temp_status = DS_MEAS_ERROR;
 		}
 	}
 }
