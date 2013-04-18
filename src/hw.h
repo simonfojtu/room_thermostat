@@ -9,8 +9,8 @@
 #include "defs.h"
 
 void hw_init(void);
-void hw_read_tick(status_t * stat);
-void hw_write_tick(status_t * stat);
+void hw_read_tick(Context * ctx);
+void hw_write_tick(Context * ctx);
 
 
 #endif

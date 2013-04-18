@@ -33,7 +33,7 @@ struct Ctrl {
 };
 
 void ctrl_init(Ctrl *c);
-void ctrl_tick(Ctrl *c, status_t *s);
+void ctrl_tick(Ctrl *c, Context *s);
 
 #endif
 

@@ -27,8 +27,8 @@ void buttons_update(void);
 uint8_t get_button_f(unsigned char);
 uint8_t get_button(unsigned char);
 
-void Keyboard_tick(status_t *stat_);
-void Keyboard_init(void);
+void Keyboard_tick(Context *ctx);
+void Keyboard_init(Context *ctx);
 
 #endif
 

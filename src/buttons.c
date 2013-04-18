@@ -7,7 +7,7 @@
 #include "fsm.h"
 #include "eeprom.h"
 
-#define KBD_EVT_QUEUE_SIZE 10
+#include "gui.h"
 
 /*
  * state of the buttons
@@ -40,67 +40,46 @@ uint8_t get_button(unsigned char which)
 	return (buttons_state[which] & 0x01);
 }
 
-typedef struct Keyboard Keyboard;
-struct Keyboard {
-	Fsm super_;
-	status_t *stat;
-};
+void KeyboardCtor(Context *ctx);
+void Keyboard_initial(Context *ctx, Event const *e);
+void Keyboard_default(Context *ctx, Event const *e);
+void Keyboard_setting_sp(Context *ctx, Event const *e);
+void Keyboard_setting_time(Context *ctx, Event const *e);
 
-Keyboard keyboard;
 
-void KeyboardCtor(Keyboard *me);
-void Keyboard_initial(Keyboard *me, Event const *e);
-void Keyboard_default(Keyboard *me, Event const *e);
-void Keyboard_setting_sp(Keyboard *me, Event const *e);
-void Keyboard_setting_time(Keyboard *me, Event const *e);
-
-typedef struct KbdEvent KbdEvent;
-struct KbdEvent {
-	Event super_;
-	char code;
-};
-
-typedef struct KbdEvtQueue KbdEvtQueue;
-struct KbdEvtQueue {
-	int size;
-	KbdEvent queue[KBD_EVT_QUEUE_SIZE];
-};
-
-KbdEvtQueue kbdEvtQueue;
-
-void KeyboardCtor(Keyboard *me)
+void KeyboardCtor(Context *ctx)
 {
-	FsmCtor_(&me->super_, &Keyboard_initial);
+	FsmCtor_(&ctx->fsm, &Keyboard_initial);
 }
 
-void Keyboard_initial(Keyboard *me, Event const *e)
+void Keyboard_initial(Context *ctx, Event const *e)
 {
-	FsmTran_((Fsm *)me, &Keyboard_setting_sp);
+	FsmTran_(&ctx->fsm, &Keyboard_setting_sp);
 }
 
 /* Temperature setpoint setting */
-void Keyboard_setting_sp(Keyboard *me, Event const *e)
+void Keyboard_setting_sp(Context *ctx, Event const *e)
 {
 	switch (e->sig) {
 	case EVT_KEY_PRESSED:
 		switch (((KbdEvent *)e)->code) {
 		case B_UP:
-                        me->stat->t1_sp+=5;
+                        ctx->t1_sp+=5;
 			break;
                 case B_DOWN:
-                        me->stat->t1_sp-=5;
+                        ctx->t1_sp-=5;
                         break;
 		case B_MENU:
-			FsmTran_((Fsm *)me, &Keyboard_setting_time);
+			FsmTran_((Fsm *)ctx, &Keyboard_setting_time);
 			break;
 		}
 	}
         /* Store temperature setpoint into eeprom */
-        eeprom_write_dword(EEPROM_T1, me->stat->t1_sp + 0xffff); // -> uint32
+        eeprom_write_dword(EEPROM_T1, ctx->t1_sp + 0xffff); // -> uint32
 }
 
 
-void Keyboard_setting_time(Keyboard *me, Event const *e)
+void Keyboard_setting_time(Context *ctx, Event const *e)
 {
 	switch (e->sig) {
 	case EVT_KEY_PRESSED:
@@ -112,13 +91,13 @@ void Keyboard_setting_time(Keyboard *me, Event const *e)
                         // TODO
                         break;
 		case B_MENU:
-			FsmTran_((Fsm *)me, &Keyboard_setting_sp);
+			FsmTran_((Fsm *)ctx, &Keyboard_setting_sp);
 			break;
 		}
 	}
 }
 
-void Keyboard_tick(status_t * stat_)
+void Keyboard_tick(Context * ctx)
 {
 	/*
 	 * Generate events
@@ -130,14 +109,14 @@ void Keyboard_tick(status_t * stat_)
 
 		/* Rising edge */
 		if ((!last[i]) && (get_button(i))) {
-			if (kbdEvtQueue.size < EVENTS_QUEUE_MAX_SIZE - 1) {
+			if (ctx->kbdEvtQueue.size < EVENTS_QUEUE_MAX_SIZE - 1) {
 				Event e;
 				e.sig = EVT_KEY_PRESSED;
 				KbdEvent nke;
 				nke.super_ = e;
 				nke.code = i;
-				kbdEvtQueue.queue[kbdEvtQueue.size] = nke;
-				kbdEvtQueue.size++;
+				ctx->kbdEvtQueue.queue[ctx->kbdEvtQueue.size] = nke;
+				ctx->kbdEvtQueue.size++;
 			} else {
 				// else drop the event
 				break;
@@ -147,25 +126,24 @@ void Keyboard_tick(status_t * stat_)
 	}
 
 	/* get event */
-	if (kbdEvtQueue.size == 0)
+	if (ctx->kbdEvtQueue.size == 0)
 		return;
 
-	KbdEvent ke = kbdEvtQueue.queue[0];
+	KbdEvent ke = ctx->kbdEvtQueue.queue[0];
 
-	for (i = 0; i < kbdEvtQueue.size - 1; i++) {
-		kbdEvtQueue.queue[i] = kbdEvtQueue.queue[i+1];
+	for (i = 0; i < ctx->kbdEvtQueue.size - 1; i++) {
+		ctx->kbdEvtQueue.queue[i] = ctx->kbdEvtQueue.queue[i+1];
 	}
-	kbdEvtQueue.size--;
+	ctx->kbdEvtQueue.size--;
 
 	/* Dispatch the event */
-	keyboard.stat = stat_;
-	FsmDispatch((Fsm *)&keyboard, (Event *)&ke);
+	FsmDispatch(&ctx->fsm, (Event *)&ke);
 }
 
-void Keyboard_init(void)
+void Keyboard_init(Context * ctx)
 {
-	KeyboardCtor(&keyboard);
-	FsmInit((Fsm *)&keyboard, 0);
+	KeyboardCtor(&ctx->fsm);
+	FsmInit(&ctx->fsm, 0);
 	buttons_init();
 }
 

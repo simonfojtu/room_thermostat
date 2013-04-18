@@ -44,13 +44,24 @@
 #endif
 
 /* Device status */
-status_t stat;
+Context ctx;
 
 volatile long mtime;
 int mtc = 0;
 
 int initialize(void)
 {
+	/* Initialize stat */
+	ctx.ltime = 0;
+#ifdef USE_KTY
+	ctx.t0 = 0;
+#endif
+        ctx.t1 = 0;
+
+        // Default settings
+	ctx.t1_sp = eeprom_read_dword(EEPROM_T1) - 0xffff;
+        ctx.ctrl_mode = CTRL_HYST;
+
 	/* Init SPI */
 	spi_init();
 
@@ -63,18 +74,7 @@ int initialize(void)
 #endif
 
 	hw_init();
-	Keyboard_init();
-
-	/* Initialize stat */
-	stat.ltime = 0;
-#ifdef USE_KTY
-	stat.t0 = 0;
-#endif
-        stat.t1 = 0;
-
-        // Default settings
-	stat.t1_sp = eeprom_read_dword(EEPROM_T1) - 0xffff;
-        stat.ctrl_mode = CTRL_HYST;
+	Keyboard_init(&ctx);
 
 	/* Init timer0 */
 	timer0_init();
@@ -106,23 +106,23 @@ void main_tick(void)
 {
 	/* Update time */
 	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-		stat.ltime = mtime;
+		ctx.ltime = mtime;
 	}
-	stat.sec = stat.ltime / TIMER0_OVF_FREQ;
+	ctx.sec = ctx.ltime / TIMER0_OVF_FREQ;
 
-	Keyboard_tick(&stat);
+	Keyboard_tick(&ctx);
 
 	if (mtc >= 10) {
 		/* Blink LED */
 		PORTB ^= (1<<PB1);
 
-		hw_read_tick(&stat);
+		hw_read_tick(&ctx);
 
-		gui_tick(&stat);
+		gui_tick(&ctx);
 #ifdef UART_LOG
-		log_tick(&stat);
+		log_tick(&ctx);
 #endif
-		hw_write_tick(&stat);
+		hw_write_tick(&ctx);
 		
 		mtc = 0;
 	}

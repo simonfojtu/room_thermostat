@@ -130,6 +130,10 @@ void LCD_writeChar (unsigned char ch)
 {
 	unsigned char j;
 
+        // test if the char fits into smallFont array (which has length 92)
+        if (ch-32 > 92)
+                ch = '?';
+
 	LCD_writeData(0x00);
 
 	for (j=0; j<5; j++)

@@ -15,6 +15,8 @@
 /* Events queue buffer size */
 #define EVENTS_QUEUE_MAX_SIZE 8
 
+#define KBD_EVT_QUEUE_SIZE 10
+
 /* DS18B20 status */
 #define DS_OK		0
 #define DS_READ_ERROR	1
@@ -30,14 +32,35 @@ enum event_type {
 	EVENT_B_UP,
 	EVENT_B_DOWN,
 	EVENT_B_MENU,
+        EVENT_B_HELD,
 	EVENT_NOP,
 	MAX_EVENTS
 };
 
 /*
+ * Keyboard UI
+ */
+
+typedef struct KbdEvent KbdEvent;
+struct KbdEvent {
+	Event super_;
+	char code;
+};
+
+typedef struct KbdEvtQueue KbdEvtQueue;
+struct KbdEvtQueue {
+	int size;
+	KbdEvent queue[KBD_EVT_QUEUE_SIZE];
+};
+/*
  * Structure to hold device status
  */
-typedef struct {
+typedef struct Context Context;
+struct Context {
+        /* Keyboard FSM */
+	Fsm fsm;
+        KbdEvtQueue kbdEvtQueue;
+
 	/* Time in 1/112.5s */
 	long ltime;
 	/* Time in seconds */
@@ -55,7 +78,7 @@ typedef struct {
 	int16_t t1_sp;
 	/* Control mode */
 	enum ctrl_mode_t ctrl_mode;
-} status_t;
+};
 
 
 /* Settings storage adresses */

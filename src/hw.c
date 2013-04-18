@@ -43,33 +43,33 @@ void hw_init()
 	ctrl_init(&t1_ctrl);
 }
 
-void hw_read_tick(status_t * stat)
+void hw_read_tick(Context * ctx)
 {
 
 #ifdef USE_KTY
 	/* Display temperatures */
 	/* KTY */
 	if (adc_is_conversion_finished()) {
-		stat.t0 = adc_get_result();
+		ctx.t0 = adc_get_result();
 		adc_start_conversion();
 	}
 #endif
 
 	/* DS */
 	if (DS18X20_conversion_in_progress() == DS18X20_CONVERSION_DONE) {
-		if (DS18X20_read_decicelsius_single(DS18B20_FAMILY_CODE, &stat->t1) == DS18X20_OK) {
-			stat->ds_status = DS_OK;
+		if (DS18X20_read_decicelsius_single(DS18B20_FAMILY_CODE, &ctx->t1) == DS18X20_OK) {
+			ctx->ds_status = DS_OK;
 		} else {
-			stat->ds_status = DS_READ_ERROR;
+			ctx->ds_status = DS_READ_ERROR;
 		}
 		if (DS18X20_start_meas(DS18X20_POWER_EXTERN, NULL) != DS18X20_OK) {
-			stat->ds_status = DS_MEAS_ERROR;
+			ctx->ds_status = DS_MEAS_ERROR;
 		}
 	}
 }
 
-void hw_write_tick(status_t * stat)
+void hw_write_tick(Context * ctx)
 {
-	ctrl_tick(&t1_ctrl, stat);
+	ctrl_tick(&t1_ctrl, ctx);
 }
 
