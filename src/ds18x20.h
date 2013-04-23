@@ -6,8 +6,9 @@ extern "C"
 {
 #endif
 
-#include <stdlib.h>
-#include <stdint.h>
+#ifndef NULL
+#define NULL 0
+#endif
 
 #include <avr/io.h>
 #include <avr/pgmspace.h>
@@ -107,8 +108,10 @@ extern "C"
 		        int16_t *decicelsius );
 	extern uint8_t DS18X20_read_decicelsius_single( uint8_t familycode,
 		        int16_t *decicelsius );
+#if DS18X20_VERBOSE
 	extern uint8_t DS18X20_format_from_decicelsius( int16_t decicelsius,
 		        char s[], uint8_t n);
+#endif
 #endif /* DS18X20_DECICELSIUS */
 
 
@@ -139,6 +142,10 @@ extern "C"
 
 
 #if DS18X20_VERBOSE
+
+#include <stdlib.h>
+#include <stdint.h>
+
 	extern void DS18X20_show_id_uart( uint8_t *id, size_t n );
 	extern uint8_t DS18X20_read_meas_all_verbose( void );
 #endif /* DS18X20_VERBOSE */

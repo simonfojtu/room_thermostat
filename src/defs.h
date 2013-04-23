@@ -8,6 +8,10 @@
 
 #include <stdint.h>
 
+#ifndef NULL
+#define NULL 0
+#endif
+
 #include "fsm.h"
 
 /* Uart communication speed */
