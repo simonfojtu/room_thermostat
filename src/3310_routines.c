@@ -13,6 +13,8 @@
 
 //global variable for remembering where to start writing the next text string on 3310 LCD
 unsigned char char_start;
+unsigned char cursor_x;
+unsigned char cursor_y;
 
 
 /*--------------------------------------------------------------------------------------------------
@@ -118,6 +120,8 @@ void LCD_gotoXY ( unsigned char x, unsigned char y )
 {
 	LCD_writeCommand (0x80 | x);   //column
 	LCD_writeCommand (0x40 | y);   //row
+        cursor_x = x;
+        cursor_y = y;
 }
 
 /*--------------------------------------------------------------------------------------------------
@@ -131,13 +135,13 @@ void LCD_writeChar (unsigned char ch)
 	unsigned char j;
 
         // test if the char fits into smallFont array (which has length 92)
-        if (ch-32 > 92)
-                ch = '?';
+//        if (ch-32 > 92)
+//                ch = '?';
 
 	LCD_writeData(0x00);
 
 	for (j=0; j<5; j++)
-		LCD_writeData( smallFont [(ch-32)*5 + j] );
+		LCD_writeData( smallFont [ch*5 + j] );
 
 	LCD_writeData( 0x00 );
 }
@@ -150,32 +154,21 @@ void LCD_writeChar (unsigned char ch)
   Argument(s)  :  ch   -> Character to write.
   Return value :  None.
 --------------------------------------------------------------------------------------------------*/
-//void LCD_writeChar_megaFont (unsigned char ch)
-//{
-//	unsigned char i, j;
-//
-//	if (ch == '.')
-//		ch = 10;
-//	else if (ch == '+')
-//		ch = 11;
-//	else if (ch == '-')
-//		ch = 12;
-//	else
-//		ch = ch & 0x0f;
-//
-//
-//	for (i=0;i<3;i++) {
-//		LCD_gotoXY (4 + char_start, i+2);
-//
-//		for (j=0; j<16; j++)
-//			LCD_writeData( number[ch][i][j]);
-//	}
-//
-//	if (ch == '.')
-//		char_start += 5;
-//	else
-//		char_start += 12;
-//}
+void LCD_writeChar_megaFont (unsigned char ch)
+{
+	for (unsigned char i=0;i<3;i++) {
+		LCD_gotoXY (char_start, i);
+
+		for (unsigned char j=0; j<16; j++) {
+			LCD_writeData( number[ch][i][j]);
+        	}
+	}
+
+	if (ch == MEGA_FONT_DOT)
+		char_start += 5;
+	else
+		char_start += 12;
+}
 
 /*--------------------------------------------------------------------------------------------------
   Name         :  LCD_writeString_megaFont
@@ -183,17 +176,17 @@ void LCD_writeChar (unsigned char ch)
   Argument(s)  :  string -> Pointer to ASCII string (stored in RAM)
   Return value :  None.
 --------------------------------------------------------------------------------------------------*/
-//void LCD_writeString_megaFont ( unsigned char *string )
-//{
-//	char_start = 0;
-//
-//	while ( *string )
-//		LCD_writeChar_megaFont( *string++ );
-//
+void LCD_writeString_megaFont ( unsigned char *string )
+{
+	char_start = 0;
+
+	while ( *string )
+		LCD_writeChar_megaFont( *string++ );
+
 //	LCD_gotoXY(char_start+6, 3);
 //	LCD_writeChar('z'+1); 			  //symbol of Degree
 //	LCD_writeChar('C');
-//}
+}
 
 /*--------------------------------------------------------------------------------------------------
   Name         :  LCD_writeString_F

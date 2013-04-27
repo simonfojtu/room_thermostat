@@ -5,23 +5,10 @@
 
 #include "defs.h"
 
-/* storing controller constants */
-//#include "eeprom.h"
 /* PID controller */
 #include "ctrl.h"
 /* buttons */
 #include "buttons.h"
-/* logger */
-#ifdef UART_LOG
-#ifndef UART_ENABLED
-#error Uart not enabled but uart log is enabled!
-#endif
-#include "logger.h"
-#endif
-/* communication with PC */
-#ifdef UART_ENABLED
-#include "uart.h"
-#endif
 /* Nokia 3310 LCD */
 #include "3310_routines.h"
 /* Timers */
@@ -37,11 +24,6 @@
 
 #include <util/delay.h>
 #include <util/atomic.h>
-
-
-#ifndef NULL
-#define NULL 0
-#endif
 
 /* Device status */
 Context ctx;
@@ -62,26 +44,12 @@ int initialize(void)
 	/* Init SPI */
 	spi_init();
 
-	/* Init uart */
-#ifdef UART_ENABLED
-	uart_init();
-	uart_enable();
-	uart_puts("uart OK\n");
-	uart_disable();
-#endif
 
 	hw_init();
 	Keyboard_init(&ctx);
 
 	/* Init timer0 */
 	timer0_init();
-	/* Speaker */
-//	timer2_init();
-
-	/* Logger */
-#ifdef UART_LOG
-	log_init();
-#endif
 
 	/* interrupt time */
 	mtime = 0;
@@ -116,9 +84,7 @@ void main_tick(void)
 		hw_read_tick(&ctx);
 
 		gui_tick(&ctx);
-#ifdef UART_LOG
-		log_tick(&ctx);
-#endif
+
 		hw_write_tick(&ctx);
 		
 		mtc = 0;

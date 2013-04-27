@@ -36,7 +36,7 @@ CSTANDARD= -std=gnu99
 COMMON= -mmcu=$(MCU)
 CFLAGS= $(COMMON)
 CFLAGS+= -DF_CPU=$(F_CPU)
-CFLAGS+= -Wall -Wstrict-prototypes -mcall-prologues -Werror
+CFLAGS+= -Wall -Wstrict-prototypes -mcall-prologues
 #CFLAGS+= -g
 CFLAGS+= -Os
 CFLAGS+= $(CSTANDARD)
@@ -124,7 +124,9 @@ load_par: $(TARGET).hex
 
 load_ser: $(TARGET).hex
 	uisp -dlpt=$(SERIALPORT) --erase  -dprog=dasa
-	uisp -dlpt=$(SERIALPORT) --upload if=$(TARGET).hex -dprog=dasa -v=3 --hash=32 --verify
+	uisp -dlpt=$(SERIALPORT) --upload if=$(TARGET).hex -dprog=dasa -v=3 --hash=32
+	
+	# --verify
 
 
 clean:
