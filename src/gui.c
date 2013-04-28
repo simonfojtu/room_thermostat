@@ -48,7 +48,7 @@ void gui_display_(Context * ctx)
                         tmp -= (tmp/10)*10;
 	        	LCD_writeChar_megaFont(MEGA_FONT_DOT);
                         LCD_writeChar_megaFont(tmp);
-	                LCD_gotoXY(char_start, 2);
+	                LCD_gotoXY(char_start, 1);
                         LCD_writeChar(SMALL_FONT_CIRC);
                         LCD_writeChar(SMALL_FONT_C);
 	        } else {

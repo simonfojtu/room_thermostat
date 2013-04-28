@@ -156,10 +156,10 @@ void LCD_writeChar (unsigned char ch)
 --------------------------------------------------------------------------------------------------*/
 void LCD_writeChar_megaFont (unsigned char ch)
 {
-	for (unsigned char i=0;i<3;i++) {
+	for (unsigned char i=0;i<2;i++) {
 		LCD_gotoXY (char_start, i);
 
-		for (unsigned char j=0; j<16; j++) {
+		for (unsigned char j=0; j<14; j++) {
 			LCD_writeData( number[ch][i][j]);
         	}
 	}
@@ -167,7 +167,7 @@ void LCD_writeChar_megaFont (unsigned char ch)
 	if (ch == MEGA_FONT_DOT)
 		char_start += 5;
 	else
-		char_start += 12;
+		char_start += 14;
 }
 
 /*--------------------------------------------------------------------------------------------------
