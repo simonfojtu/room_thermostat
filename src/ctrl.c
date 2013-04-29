@@ -20,16 +20,8 @@ void ctrl_init(Ctrl *c)
 
 void ctrl_tick(Ctrl *c, Context *ctx)
 {
-	static int action;
+	char action;
 
-	/* Start of the period */
-	if (c->t0 == -1)
-		c->t0 = ctx->ltime;
-
-	/* deviation */
-	c->e = ctx->t1_sp - ctx->t1;
-	/* integration */
-	c->e_sum += c->I * c->e;
 
 	switch (ctx->ctrl_mode) {
 	case CTRL_OFF:
@@ -37,10 +29,7 @@ void ctrl_tick(Ctrl *c, Context *ctx)
 		break;
 
         case CTRL_HYST:
-                if (c->e > 1)
-                        action = c->T_act;
-                if (c->e < -1)
-        		action = 0;
+                action = (ctx->t1_sp - ctx->t1 > 1) ? 1 : 0;
 		break;
                 
         case CTRL_MAX:
@@ -48,23 +37,9 @@ void ctrl_tick(Ctrl *c, Context *ctx)
                 break;
 	}
 
-	c->t1 = action * c->period / c->T_act;
-	/* saturation */
-	if (c->t1 > c->period)
-		c->t1 = c->period;
-
-	/* minimal action */
-	if (c->t1 < c->t1_min)
-		c->t1 = 0;
-
-	/* Generate PWM */
-	if (ctx->ltime < c->t0 + c->t1) {
+	if (action)
 		PORTD |= 1<<PD5;
-	} else if (ctx->ltime < c->t0 + c->period) {
+        else
 		PORTD &= ~(1<<PD5);
-	} else {
-		c->t0 = -1;
-	}
-
 }
 

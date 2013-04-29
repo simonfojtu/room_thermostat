@@ -42,7 +42,8 @@ void KeyboardCtor(Context *ctx);
 void Keyboard_initial(Context *ctx, Event const *e);
 void Keyboard_default(Context *ctx, Event const *e);
 void Keyboard_setting_sp(Context *ctx, Event const *e);
-void Keyboard_setting_time(Context *ctx, Event const *e);
+void Keyboard_setting_time_h(Context *ctx, Event const *e);
+void Keyboard_setting_time_m(Context *ctx, Event const *e);
 void Keyboard_setting_onoff(Context *ctx, Event const *e);
 
 
@@ -69,7 +70,7 @@ void Keyboard_setting_sp(Context *ctx, Event const *e)
                         ctx->t1_sp-=5;
                         break;
 		case B_MENU:
-			FsmTran_((Fsm *)ctx, &Keyboard_setting_time);
+			FsmTran_((Fsm *)ctx, &Keyboard_setting_time_h);
 			break;
 		}
                 break;
@@ -89,22 +90,50 @@ void Keyboard_setting_sp(Context *ctx, Event const *e)
 }
 
 
-void Keyboard_setting_time(Context *ctx, Event const *e)
+void Keyboard_setting_time_h(Context *ctx, Event const *e)
 {
 	switch (e->sig) {
 	case EVT_KEY_PRESSED:
+        case EVT_KEY_HELD:
 		switch (((KbdEvent *)e)->code) {
 		case B_UP:
-                        // TODO
+                        ctx->t_offset+=60;
 			break;
                 case B_DOWN:
-                        // TODO
+                        ctx->t_offset-=60;
+                        break;
+		case B_MENU:
+			FsmTran_((Fsm *)ctx, &Keyboard_setting_time_m);
+			break;
+		}
+	}
+        if (ctx->t_offset < 0)
+                ctx->t_offset += 60*24;
+        if (ctx->t_offset >= 60*24)
+                ctx->t_offset -= 60*24;
+}
+
+void Keyboard_setting_time_m(Context *ctx, Event const *e)
+{
+	switch (e->sig) {
+	case EVT_KEY_PRESSED:
+        case EVT_KEY_HELD:
+		switch (((KbdEvent *)e)->code) {
+		case B_UP:
+                        ctx->t_offset+=1;
+			break;
+                case B_DOWN:
+                        ctx->t_offset-=1;
                         break;
 		case B_MENU:
 			FsmTran_((Fsm *)ctx, &Keyboard_setting_onoff);
 			break;
 		}
 	}
+        if (ctx->t_offset < 0)
+                ctx->t_offset ++;
+        if (ctx->t_offset >= 60*24)
+                ctx->t_offset -= 60*24;
 }
 
 void Keyboard_setting_onoff(Context *ctx, Event const *e)

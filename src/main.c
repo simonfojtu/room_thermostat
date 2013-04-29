@@ -29,12 +29,13 @@
 Context ctx;
 
 volatile long mtime;
+volatile long vmin;
 int mtc = 0;
 
 int initialize(void)
 {
 	/* Initialize stat */
-	ctx.ltime = 0;
+	ctx.min = 0;
         ctx.t1 = 0;
 
         // Default settings
@@ -65,15 +66,20 @@ ISR(TIMER0_OVF_vect)
 {
 	/* frequency 112.5 Hz */
 	mtime++;
+        if (mtime == 112.5*60) { // one minute
+                vmin++;
+        }
+        if (vmin == 24*60) { // one day
+                vmin = 0;
+        }
 }
 
 void main_tick(void)
 {
 	/* Update time */
 	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-		ctx.ltime = mtime;
+		ctx.min = vmin;
 	}
-	ctx.sec = ctx.ltime / TIMER0_OVF_FREQ;
 
 	Keyboard_tick(&ctx);
 

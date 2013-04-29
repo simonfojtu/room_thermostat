@@ -70,26 +70,22 @@ void gui_display_(Context * ctx)
         }
 
 	/* current time */
-//	if (ctx->sec != sec_) {
-//		hour = (ctx->sec / 3600) % 24;
-//		min = ctx->sec / 60 - hour * 60;
-//		sec_ = ctx->sec - hour * 3600 - min * 60;
-//
-//		LCD_gotoXY(0, 3);
-//		LCD_writeString_F((unsigned char *) ltoa(hour, buffer, 10));
-//		LCD_writeChar(':');
-//		if (min < 10)
-//			LCD_writeChar('0');
-//		LCD_writeString_F((unsigned char *) ltoa(min, buffer, 10));
-//		LCD_writeChar(':');
-//		if (sec_ < 10)
-//			LCD_writeChar('0');
-//		LCD_writeString_F((unsigned char *) ltoa(sec_, buffer, 10));
-//		LCD_writeChar(' ');
-//		LCD_writeChar(' ');
-//	}
-//
-//
+	if (ctx->min != ctx_prev.min || ctx_prev.t_offset != ctx->t_offset) {
+                int min = ctx->min + ctx->t_offset;
+		hour = (min / 60) % 24;
+		min = (min - hour * 60) % 60;
+
+		LCD_gotoXY(0, 3);
+                LCD_writeChar(hour / 10);
+                LCD_writeChar(hour % 10);
+		LCD_writeChar(SMALL_FONT_COLON);
+                LCD_writeChar(min / 10);
+                LCD_writeChar(min % 10);
+		LCD_writeChar(SMALL_FONT_SPACE);
+		LCD_writeChar(SMALL_FONT_SPACE);
+	}
+
+
 	/* display mode */
         if (ctx->ctrl_mode != ctx_prev.ctrl_mode) {
         	LCD_gotoXY(64,1);

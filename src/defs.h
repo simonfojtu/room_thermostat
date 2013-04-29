@@ -65,10 +65,11 @@ struct Context {
 	Fsm fsm;
         KbdEvtQueue kbdEvtQueue;
 
-	/* Time in 1/112.5s */
-	long ltime;
-	/* Time in seconds */
-	long sec;
+	/* Time in minutes */
+	volatile long min;
+
+        /* time offset */
+        long t_offset;
 
 	/* temperature in decicelsius */
 	int16_t t1;
