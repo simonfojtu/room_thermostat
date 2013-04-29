@@ -13,7 +13,7 @@
 #include "spi.h"
 
 
-long sec_ = -1;
+int min_ = -1;
 
 void gui_display_(Context *ctx);
 
@@ -26,8 +26,7 @@ void gui_tick(Context * ctx)
 
 void gui_display_(Context * ctx)
 {
-	long hour;
-	long min;
+	int hour;
         static Context ctx_prev;
 
 	// TODO display selection
@@ -70,7 +69,7 @@ void gui_display_(Context * ctx)
         }
 
 	/* current time */
-	if (ctx->min != ctx_prev.min || ctx_prev.t_offset != ctx->t_offset) {
+	if (ctx->min != min_ || ctx->min != ctx_prev.min || ctx_prev.t_offset != ctx->t_offset) {
                 int min = ctx->min + ctx->t_offset;
 		hour = (min / 60) % 24;
 		min = (min - hour * 60) % 60;
@@ -86,7 +85,7 @@ void gui_display_(Context * ctx)
 	}
 
 
-	/* display mode */
+	/* display mode on/off */
         if (ctx->ctrl_mode != ctx_prev.ctrl_mode) {
         	LCD_gotoXY(64,1);
         	switch (ctx->ctrl_mode) {

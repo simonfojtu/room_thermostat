@@ -71,6 +71,7 @@ void Keyboard_setting_sp(Context *ctx, Event const *e)
                         break;
 		case B_MENU:
 			FsmTran_((Fsm *)ctx, &Keyboard_setting_time_h);
+                        ctx->fsm_state = FSM_HOUR;
 			break;
 		}
                 break;
@@ -94,7 +95,6 @@ void Keyboard_setting_time_h(Context *ctx, Event const *e)
 {
 	switch (e->sig) {
 	case EVT_KEY_PRESSED:
-        case EVT_KEY_HELD:
 		switch (((KbdEvent *)e)->code) {
 		case B_UP:
                         ctx->t_offset+=60;
@@ -104,7 +104,17 @@ void Keyboard_setting_time_h(Context *ctx, Event const *e)
                         break;
 		case B_MENU:
 			FsmTran_((Fsm *)ctx, &Keyboard_setting_time_m);
+                        ctx->fsm_state = FSM_MIN;
 			break;
+		}
+        case EVT_KEY_HELD:
+		switch (((KbdEvent *)e)->code) {
+		case B_UP:
+                        ctx->t_offset+=60;
+			break;
+                case B_DOWN:
+                        ctx->t_offset-=60;
+                        break;
 		}
 	}
         if (ctx->t_offset < 0)
@@ -117,7 +127,6 @@ void Keyboard_setting_time_m(Context *ctx, Event const *e)
 {
 	switch (e->sig) {
 	case EVT_KEY_PRESSED:
-        case EVT_KEY_HELD:
 		switch (((KbdEvent *)e)->code) {
 		case B_UP:
                         ctx->t_offset+=1;
@@ -127,7 +136,17 @@ void Keyboard_setting_time_m(Context *ctx, Event const *e)
                         break;
 		case B_MENU:
 			FsmTran_((Fsm *)ctx, &Keyboard_setting_onoff);
+                        ctx->fsm_state = FSM_MODE;
 			break;
+		}
+        case EVT_KEY_HELD:
+		switch (((KbdEvent *)e)->code) {
+		case B_UP:
+                        ctx->t_offset+=1;
+			break;
+                case B_DOWN:
+                        ctx->t_offset-=1;
+                        break;
 		}
 	}
         if (ctx->t_offset < 0)
@@ -149,6 +168,7 @@ void Keyboard_setting_onoff(Context *ctx, Event const *e)
                         break;
 		case B_MENU:
 			FsmTran_((Fsm *)ctx, &Keyboard_setting_sp);
+                        ctx->fsm_state = FSM_SP;
 			break;
 		}
 	}

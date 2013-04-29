@@ -20,7 +20,7 @@ void ctrl_init(Ctrl *c)
 
 void ctrl_tick(Ctrl *c, Context *ctx)
 {
-	char action;
+	char action = 0;
 
 
 	switch (ctx->ctrl_mode) {

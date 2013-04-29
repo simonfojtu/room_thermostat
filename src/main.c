@@ -37,6 +37,7 @@ int initialize(void)
 	/* Initialize stat */
 	ctx.min = 0;
         ctx.t1 = 0;
+        ctx.fsm_state = FSM_SP;
 
         // Default settings
 	ctx.t1_sp = eeprom_read_dword(EEPROM_T1) - 0xffff;
@@ -67,10 +68,11 @@ ISR(TIMER0_OVF_vect)
 	/* frequency 112.5 Hz */
 	mtime++;
         if (mtime == 112.5*60) { // one minute
+                mtime = 0;
                 vmin++;
-        }
-        if (vmin == 24*60) { // one day
-                vmin = 0;
+                if (vmin == 24*60) { // one day
+                        vmin = 0;
+                }
         }
 }
 

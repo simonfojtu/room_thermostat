@@ -41,6 +41,14 @@ enum event_type {
 	MAX_EVENTS
 };
 
+enum fsm_state_t {
+        FSM_SP,
+        FSM_MIN,
+        FSM_HOUR,
+        FSM_MODE,
+        FSM_MAX
+};
+
 /*
  * Keyboard UI
  */
@@ -64,11 +72,12 @@ struct Context {
         /* Keyboard FSM */
 	Fsm fsm;
         KbdEvtQueue kbdEvtQueue;
+        enum fsm_state_t fsm_state;
 
 	/* Time in minutes */
 	volatile long min;
 
-        /* time offset */
+        /* time offset in minutes */
         long t_offset;
 
 	/* temperature in decicelsius */
