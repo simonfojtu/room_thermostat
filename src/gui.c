@@ -100,6 +100,28 @@ void gui_tick(Context * ctx)
                         // to keep compiler quiet about not handling CTRL_MAX in the switch
                         break;
         	}
+
+                /* display icon for current fsm state */
+                LCD_gotoXY(64,2);
+                switch (ctx->fsm_state) {
+                case(FSM_SP):
+                        LCD_writeChar(SMALL_FONT_THERMOMETER);
+                        break;
+                case(FSM_MIN):
+                        LCD_writeChar(SMALL_FONT_HOUR_GLASS_M);
+                        break;
+                case(FSM_HOUR):
+                        LCD_writeChar(SMALL_FONT_HOUR_GLASS_H);
+                        break;
+                case(FSM_MODE):
+                        LCD_writeChar(SMALL_FONT_POWER);
+                        break;
+                case(FSM_PROG):
+        		LCD_writeChar(SMALL_FONT_SPACE);
+                        break;
+                case(FSM_MAX):
+                        break;
+                }
         } else { // FSM_PROG
                 for (uint8_t i = 0; i < PROG_ENTRIES_COUNT; i++) {
                         int16_t tmp, min;
