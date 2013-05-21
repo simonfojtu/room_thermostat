@@ -25,8 +25,8 @@ enum {
 
 void buttons_init(void);
 void buttons_update(void);
-uint8_t get_button_f(unsigned char);
-uint8_t get_button(unsigned char);
+uint16_t get_button_f(unsigned char);
+uint16_t get_button(unsigned char);
 
 void Keyboard_tick(Context *ctx);
 void Keyboard_init(Context *ctx);

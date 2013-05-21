@@ -38,10 +38,18 @@ int initialize(void)
 	ctx.min = 0;
         ctx.t1 = 0;
         ctx.fsm_state = FSM_SP;
-
         // Default settings
-	ctx.t1_sp = eeprom_read_dword(EEPROM_T1) - 0xffff;
+	ctx.t1_sp = eeprom_read_dword((uint32_t *)EEPROM_T1) - 0xffff;
         ctx.ctrl_mode = CTRL_HYST;
+
+        // prog
+        for (uint8_t i = 0; i < PROG_ENTRIES_COUNT; i++) {
+                ctx.progEntries[i].temp = eeprom_read_dword((uint32_t *)EEPROM_PE + 8*i) - 0xffff;
+                ctx.progEntries[i].min = eeprom_read_dword((uint32_t *)EEPROM_PE + 8*i + 4) - 0xffff;
+        }
+
+        ctx.entry_id = 0;
+        ctx.thm = 0;
 
 	/* Init SPI */
 	spi_init();
@@ -85,10 +93,7 @@ void main_tick(void)
 
 	Keyboard_tick(&ctx);
 
-	if (mtc >= 10) {
-		/* Blink LED */
-		PORTB ^= (1<<PB1);
-
+	if (mtc >= 5) {
 		hw_read_tick(&ctx);
 
 		gui_tick(&ctx);
@@ -114,7 +119,7 @@ int main(void)
 
 	for (;;) {
 		main_tick();
-		_delay_ms(10);
+		_delay_ms(20);
 	}
 	return 0;
 }

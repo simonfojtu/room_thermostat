@@ -4,7 +4,7 @@
 #include "eeprom.h"
 
 /*!
- * ATMEGA16 eeprom size in bytes
+ * ATMEGA8 eeprom size in bytes
  */
 #define EEPROM_MEMORY_SIZE 512
 

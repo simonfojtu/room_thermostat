@@ -11,8 +11,8 @@
  * state of the buttons
  * UP, DOWN, MENU 
  */
-uint8_t buttons_state[BUTTONS_COUNT];
-uint8_t last[BUTTONS_COUNT];
+uint8_t button_pressed[BUTTONS_COUNT];
+uint16_t buttons[BUTTONS_COUNT];
 
 void buttons_init(void)
 {
@@ -23,19 +23,9 @@ void buttons_init(void)
 void buttons_update(void)
 {
 	/* according to wiring */
-	buttons_state[B_UP]	= (buttons_state[B_UP]    << 1) | ((PINC & 1<<PC2) == 0);
-	buttons_state[B_DOWN]	= (buttons_state[B_DOWN]  << 1) | ((PINC & 1<<PC4) == 0);
-	buttons_state[B_MENU]	= (buttons_state[B_MENU] << 1) | ((PINC & 1<<PC3) == 0);
-}
-
-uint8_t get_button_f(unsigned char which)
-{
-	return buttons_state[which];
-}
-
-uint8_t get_button(unsigned char which)
-{
-	return (buttons_state[which] & 0x01);
+	button_pressed[B_UP]	= ((PINC & 1<<PC2) == 0);
+	button_pressed[B_DOWN]	= ((PINC & 1<<PC4) == 0);
+	button_pressed[B_MENU]	= ((PINC & 1<<PC3) == 0);
 }
 
 void KeyboardCtor(Context *ctx);
@@ -44,6 +34,7 @@ void Keyboard_default(Context *ctx, Event const *e);
 void Keyboard_setting_sp(Context *ctx, Event const *e);
 void Keyboard_setting_time_h(Context *ctx, Event const *e);
 void Keyboard_setting_time_m(Context *ctx, Event const *e);
+void Keyboard_setting_prog(Context *ctx, Event const *e);
 void Keyboard_setting_onoff(Context *ctx, Event const *e);
 
 
@@ -87,7 +78,7 @@ void Keyboard_setting_sp(Context *ctx, Event const *e)
                 break;
 	}
         /* Store temperature setpoint into eeprom */
-        eeprom_write_dword(EEPROM_T1, ctx->t1_sp + 0xffff); // -> uint32
+        eeprom_write_dword((uint32_t *)EEPROM_T1, ctx->t1_sp + 0xffff); // -> uint32
 }
 
 
@@ -107,6 +98,7 @@ void Keyboard_setting_time_h(Context *ctx, Event const *e)
                         ctx->fsm_state = FSM_MIN;
 			break;
 		}
+                break;
         case EVT_KEY_HELD:
 		switch (((KbdEvent *)e)->code) {
 		case B_UP:
@@ -135,10 +127,11 @@ void Keyboard_setting_time_m(Context *ctx, Event const *e)
                         ctx->t_offset-=1;
                         break;
 		case B_MENU:
-			FsmTran_((Fsm *)ctx, &Keyboard_setting_onoff);
-                        ctx->fsm_state = FSM_MODE;
+			FsmTran_((Fsm *)ctx, &Keyboard_setting_prog);
+                        ctx->fsm_state = FSM_PROG;
 			break;
 		}
+                break;
         case EVT_KEY_HELD:
 		switch (((KbdEvent *)e)->code) {
 		case B_UP:
@@ -148,11 +141,114 @@ void Keyboard_setting_time_m(Context *ctx, Event const *e)
                         ctx->t_offset-=1;
                         break;
 		}
+                break;
 	}
         if (ctx->t_offset < 0)
-                ctx->t_offset ++;
+                ctx->t_offset += 60*24;
         if (ctx->t_offset >= 60*24)
                 ctx->t_offset -= 60*24;
+}
+
+void Keyboard_setting_prog(Context *ctx, Event const *e)
+{
+	switch (e->sig) {
+	case EVT_KEY_PRESSED:
+		switch (((KbdEvent *)e)->code) {
+		case B_UP:
+                        switch (ctx->thm) {
+                                case 0: // temperature
+                                        ctx->progEntries[ctx->entry_id].temp+=5;
+                                        break;
+                                case 1: // hour
+                                        ctx->progEntries[ctx->entry_id].min+=60;
+                                        break;
+                                case 2: // minute
+                                        ctx->progEntries[ctx->entry_id].min+=10;
+                                        break;
+                        }
+                        if (ctx->progEntries[ctx->entry_id].min >= 60*24)
+                                ctx->progEntries[ctx->entry_id].min -= 60*24;
+			break;
+                case B_DOWN:
+                        switch (ctx->thm) {
+                                case 0: // temperature
+                                        ctx->progEntries[ctx->entry_id].temp-=5;
+                                        break;
+                                case 1: // hour
+                                        ctx->progEntries[ctx->entry_id].min-=60;
+                                        break;
+                                case 2: // minute
+                                        ctx->progEntries[ctx->entry_id].min-=10;
+                                        break;
+                        }
+                        if (ctx->progEntries[ctx->entry_id].min < 0)
+                                ctx->progEntries[ctx->entry_id].min += 60*24;
+                        break;
+		case B_MENU:
+                        ctx->thm++;
+                        if (ctx->thm == 3) {
+                                ctx->thm = 0;
+                                ctx->entry_id++;
+                        }
+                        if (ctx->entry_id == PROG_ENTRIES_COUNT) {
+                                ctx->entry_id = 0;
+        			FsmTran_((Fsm *)ctx, &Keyboard_setting_onoff);
+                                ctx->fsm_state = FSM_MODE;
+
+                                for (uint8_t i = 0; i < PROG_ENTRIES_COUNT; i++) {
+                                        eeprom_write_dword((uint32_t *)EEPROM_PE + 8*i, ctx->progEntries[i].temp + 0xffff); // -> uint32
+                                        eeprom_write_dword((uint32_t *)EEPROM_PE + 8*i + 4, ctx->progEntries[i].min + 0xffff); // -> uint32
+                                }
+                        }
+			break;
+		}
+                break;
+        case EVT_KEY_HELD:
+		switch (((KbdEvent *)e)->code) {
+		case B_UP:
+                        switch (ctx->thm) {
+                                case 0: // temperature
+                                        ctx->progEntries[ctx->entry_id].temp+=5;
+                                        break;
+                                case 1: // hour
+                                        ctx->progEntries[ctx->entry_id].min+=60;
+                                        break;
+                                case 2: // minute
+                                        ctx->progEntries[ctx->entry_id].min+=10;
+                                        break;
+                        }
+                        if (ctx->progEntries[ctx->entry_id].min >= 60*24)
+                                ctx->progEntries[ctx->entry_id].min -= 60*24;
+			break;
+                case B_DOWN:
+                        switch (ctx->thm) {
+                                case 0: // temperature
+                                        ctx->progEntries[ctx->entry_id].temp-=5;
+                                        break;
+                                case 1: // hour
+                                        ctx->progEntries[ctx->entry_id].min-=60;
+                                        break;
+                                case 2: // minute
+                                        ctx->progEntries[ctx->entry_id].min-=10;
+                                        break;
+                        }
+                        if (ctx->progEntries[ctx->entry_id].min < 0)
+                                ctx->progEntries[ctx->entry_id].min += 60*24;
+                        break;
+                case B_MENU:
+                        ctx->entry_id = 0;
+                        ctx->thm = 0;
+			FsmTran_((Fsm *)ctx, &Keyboard_setting_sp);
+                        ctx->fsm_state = FSM_MODE;
+                        for (uint8_t i = 0; i < PROG_ENTRIES_COUNT; i++) {
+                                eeprom_write_dword((uint32_t *)EEPROM_PE + 8*i, ctx->progEntries[i].temp + 0xffff); // -> uint32
+                                eeprom_write_dword((uint32_t *)EEPROM_PE + 8*i + 4, ctx->progEntries[i].min + 0xffff); // -> uint32
+                        }
+                        break;
+		}
+                break;
+        }
+
 }
 
 void Keyboard_setting_onoff(Context *ctx, Event const *e)
@@ -183,9 +279,14 @@ void Keyboard_tick(Context * ctx)
 	/* update buttons state */
 	buttons_update();
 	for (i = 0; i < BUTTONS_COUNT; i++) {
+                if (button_pressed[i])
+                        buttons[i]++;
+                else
+                        buttons[i] = 0;
+
 
 		/* Rising edge */
-		if ((!last[i]) && (get_button(i))) {
+		if (buttons[i] == 1) {
 			if (ctx->kbdEvtQueue.size < EVENTS_QUEUE_MAX_SIZE - 1) {
 				Event e;
 				e.sig = EVT_KEY_PRESSED;
@@ -200,8 +301,8 @@ void Keyboard_tick(Context * ctx)
 			}
 		}
                 /* Button held */
-                if (get_button_f(i) == 0xff) {
-                        buttons_state[i] = 0xfd; // 11111101b
+                if (buttons[i] > BUTTON_HELD_TIMEOUT) {
+                        buttons[i] = 1;
 			if (ctx->kbdEvtQueue.size < EVENTS_QUEUE_MAX_SIZE - 1) {
 				Event e;
 				e.sig = EVT_KEY_HELD;
@@ -215,7 +316,6 @@ void Keyboard_tick(Context * ctx)
 				break;
 			}
                 }
-		last[i] = get_button(i);
 	}
 
 	/* get event */

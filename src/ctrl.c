@@ -7,18 +7,13 @@
 #include "3310_routines.h"
 #include <stdlib.h>
 
-void ctrl_init(Ctrl *c)
+void ctrl_init(void)
 {
-	/* Write initialization routine here */
-
 	/* output pin */
 	DDRD |= 1<<PD5;
-
-	c->e_sum = 0;
-	c->t0 = -1;
 }
 
-void ctrl_tick(Ctrl *c, Context *ctx)
+void ctrl_tick(Context *ctx)
 {
 	char action = 0;
 

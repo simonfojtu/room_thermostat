@@ -13,8 +13,6 @@
 /* controller */
 #include "ctrl.h"
 
-Ctrl t1_ctrl;
-
 void hw_init()
 {
 	/* Status LED */
@@ -25,13 +23,8 @@ void hw_init()
 	ow_set_bus(&PINB,&PORTB,&DDRB,PB0);
 #endif
 
-	/* Init PI controller */
-	t1_ctrl.P = 1;
-	t1_ctrl.I = 0;
-	t1_ctrl.period = 11250; // = 100 s
-	t1_ctrl.t1_min = 1125; // 10 s
-	t1_ctrl.T_act = 200; // = 20 deg C
-	ctrl_init(&t1_ctrl);
+	/* Init controller */
+	ctrl_init();
 }
 
 void hw_read_tick(Context * ctx)
@@ -52,6 +45,6 @@ void hw_read_tick(Context * ctx)
 
 void hw_write_tick(Context * ctx)
 {
-	ctrl_tick(&t1_ctrl, ctx);
+	ctrl_tick(ctx);
 }
 
