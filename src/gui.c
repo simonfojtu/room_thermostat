@@ -81,16 +81,21 @@ void gui_tick(Context * ctx)
                 /* display mode on/off */
         	LCD_gotoXY(64,1);
         	switch (ctx->ctrl_mode) {
-        	case(CTRL_HYST):
-        		LCD_writeChar(SMALL_FONT_SPACE);
-        		LCD_writeChar(SMALL_FONT_SPACE);
-        		LCD_writeChar(SMALL_FONT_SPACE);
-        		break;
         	case(CTRL_OFF):
         		LCD_writeChar(SMALL_FONT_o);
         		LCD_writeChar(SMALL_FONT_f);
         		LCD_writeChar(SMALL_FONT_f);
         		break;
+        	case(CTRL_HYST):
+        		LCD_writeChar(SMALL_FONT_SPACE);
+        		LCD_writeChar(SMALL_FONT_SPACE);
+        		LCD_writeChar(SMALL_FONT_SPACE);
+        		break;
+                case(CTRL_AUTO):
+                        LCD_writeChar(SMALL_FONT_a);
+        		LCD_writeChar(SMALL_FONT_SPACE);
+        		LCD_writeChar(SMALL_FONT_SPACE);
+                        break;
                 case(CTRL_MAX):
                         // to keep compiler quiet about not handling CTRL_MAX in the switch
                         break;

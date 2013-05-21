@@ -238,7 +238,7 @@ void Keyboard_setting_prog(Context *ctx, Event const *e)
                 case B_MENU:
                         ctx->entry_id = 0;
                         ctx->thm = 0;
-			FsmTran_((Fsm *)ctx, &Keyboard_setting_sp);
+        		FsmTran_((Fsm *)ctx, &Keyboard_setting_onoff);
                         ctx->fsm_state = FSM_MODE;
                         for (uint8_t i = 0; i < PROG_ENTRIES_COUNT; i++) {
                                 eeprom_write_dword((uint32_t *)EEPROM_PE + 8*i, ctx->progEntries[i].temp + 0xffff); // -> uint32
@@ -257,10 +257,15 @@ void Keyboard_setting_onoff(Context *ctx, Event const *e)
 	case EVT_KEY_PRESSED:
 		switch (((KbdEvent *)e)->code) {
 		case B_UP:
-                        ctx->ctrl_mode = CTRL_HYST;
+                        ctx->ctrl_mode++;
+                        if (ctx->ctrl_mode == CTRL_MAX)
+                                ctx->ctrl_mode = 0;
 			break;
                 case B_DOWN:
-                        ctx->ctrl_mode = CTRL_OFF;
+                        if (ctx->ctrl_mode == 0)
+                                ctx->ctrl_mode = CTRL_MAX-1;
+                        else
+                                ctx->ctrl_mode--;
                         break;
 		case B_MENU:
 			FsmTran_((Fsm *)ctx, &Keyboard_setting_sp);

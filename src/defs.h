@@ -22,7 +22,7 @@
 #define KBD_EVT_QUEUE_SIZE 10
 // how many ticks must a button be held down to be considered 'pressed'
 #define BUTTON_HELD_TIMEOUT 12
-
+// number of program entries. 5 fits the screen well
 #define PROG_ENTRIES_COUNT 5
 
 /* DS18B20 status */
@@ -31,13 +31,14 @@
 #define DS_MEAS_ERROR	2
 
 enum ctrl_mode_t {
-	CTRL_OFF,
+	CTRL_OFF = 0,
         CTRL_HYST,
+        CTRL_AUTO,
 	CTRL_MAX
 };
 
 enum event_type {
-	EVENT_B_UP,
+	EVENT_B_UP = 0,
 	EVENT_B_DOWN,
 	EVENT_B_MENU,
         EVENT_B_HELD,
@@ -117,7 +118,7 @@ struct Context {
 /* Settings storage adresses */
 #define EEPROM_T1 0 // dword = 4 bytes
 
-#define EEPROM_PE 4 // PROG_ENTRY_COUNT * (int16_t + int16_t)
+#define EEPROM_PE 4 // PROG_ENTRY_COUNT * (int16_t + int16_t) = 5*
 
 
 #endif
