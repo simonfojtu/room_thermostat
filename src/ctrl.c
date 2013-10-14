@@ -15,7 +15,7 @@ void ctrl_init(void)
 
 void ctrl_tick(Context *ctx)
 {
-	char action = 0;
+	char action = 2;
 
         int16_t now;
 
@@ -25,17 +25,25 @@ void ctrl_tick(Context *ctx)
 		break;
 
         case(CTRL_HYST):
-                action = (ctx->t1_sp - ctx->t1 > 1) ? 1 : 0;
+                if (ctx->t1_sp - ctx->t1 > 1)
+                        action = 1;
+                if (ctx->t1_sp - ctx->t1 < -1)
+                        action = 0;
 		break;
 
         case(CTRL_AUTO):
+                {
                 now = (ctx->min + ctx->t_offset) % (24*60);
                 for (unsigned int i = 0; i < PROG_ENTRIES_COUNT; i++) {
-                        if (now == ctx->progEntries[i].min) {
+                        if (now >= ctx->progEntries[i].min) {
                                 ctx->t1_sp = ctx->progEntries[i].temp;
                         }
                 }
-                action = (ctx->t1_sp - ctx->t1 > 1) ? 1 : 0;
+                if (ctx->t1_sp - ctx->t1 > 1)
+                        action = 1;
+                if (ctx->t1_sp - ctx->t1 < -1)
+                        action = 0;
+                }
                 break;
                 
         case(CTRL_MAX):
@@ -43,9 +51,9 @@ void ctrl_tick(Context *ctx)
                 break;
 	}
 
-	if (action)
+	if (action == 1)
 		PORTD |= 1<<PD5;
-        else
+        if (action == 0)
 		PORTD &= ~(1<<PD5);
 }
 
